@@ -5,6 +5,10 @@ using Hart.ErrorHandlers;
 
 namespace ErrorHandlersTests
 {
+
+    /// <summary>
+    /// Class for testing.
+    /// </summary>
     public class Calculator
     {
 
