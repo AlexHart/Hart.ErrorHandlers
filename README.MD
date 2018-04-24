@@ -34,16 +34,20 @@ if (result is Success && result is Success<double>) {
 // Doing division could throw a divide by zero exception.
 public IResult DoDivision(int x, int y)
 {
-    IResult result;
-    try
-    {
-        result = new Success<double>(x / y);
-    }
-    catch (Exception ex)
-    {
-        result = new Error(ex);
-    }
-    return result;
+	IResult result;
+	try
+	{
+		result = new Success<double>(x / y);
+	}
+	catch(DivideByZeroException ex)
+	{
+		result = new Error<DivideByZeroException>(ex);
+	}
+	catch (Exception ex)
+	{
+		result = new Error(ex);
+	}
+	return result;
 }
 ```
 
