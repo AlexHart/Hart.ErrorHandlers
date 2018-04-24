@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Alejandro Hartlohner</Authors>
+    <Description>Helpers for error handling</Description>
+  </PropertyGroup>
+
+</Project>
