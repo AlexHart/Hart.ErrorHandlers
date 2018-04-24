@@ -5,6 +5,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Alejandro Hartlohner</Authors>
     <Description>Helpers for error handling</Description>
+    <PackageProjectUrl>https://github.com/AlexHart/Hart.ErrorHandlers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AlexHart/Hart.ErrorHandlers</RepositoryUrl>
+    <PackageTags>C#, functional, error handling</PackageTags>
+    <NeutralLanguage />
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
 </Project>

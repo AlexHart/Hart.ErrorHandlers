@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hart.ErrorHandlers", "Hart.ErrorHandlers\Hart.ErrorHandlers.csproj", "{7E01BD64-5C88-41D0-AA9B-AC7C0C6D8B3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandlersTests", "ErrorHandlersTests\ErrorHandlersTests.csproj", "{679F93CB-C72A-4704-937E-FC8704BBF983}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7E01BD64-5C88-41D0-AA9B-AC7C0C6D8B3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E01BD64-5C88-41D0-AA9B-AC7C0C6D8B3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E01BD64-5C88-41D0-AA9B-AC7C0C6D8B3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{679F93CB-C72A-4704-937E-FC8704BBF983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{679F93CB-C72A-4704-937E-FC8704BBF983}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{679F93CB-C72A-4704-937E-FC8704BBF983}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{679F93CB-C72A-4704-937E-FC8704BBF983}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
