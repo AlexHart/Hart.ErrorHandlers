@@ -19,7 +19,7 @@ IResult result = calculator.DoDivision(10, 0);
 // The user has to check the type before accessing to the value.
 if (result is Error) {
     var exception = (result as Error).Exception;
-    Console.WriteLine()
+    Console.WriteLine(exception);
 } 
 
 // Or...
