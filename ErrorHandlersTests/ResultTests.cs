@@ -200,6 +200,10 @@ namespace ErrorHandlersTests
 
             // Assert.
             Assert.True(success is Success);
+            Assert.NotNull(success);
+            Assert.True(tuple.IsSuccessful());
+            Assert.NotNull(tuple.Item1);
+            Assert.Null(tuple.Item2);
         }
 
         [Fact]
@@ -218,6 +222,9 @@ namespace ErrorHandlersTests
             Assert.True(success is Success);
             Assert.True(success is Success<double>);
             Assert.Equal(5, success.Value);
+            Assert.True(tuple.IsSuccessful());
+            Assert.NotNull(tuple.Item1);
+            Assert.Null(tuple.Item2);
         }
 
         [Fact]
@@ -228,12 +235,16 @@ namespace ErrorHandlersTests
 
             // Act.
             IResult result = calculator.DoDivision(10, 0);
-            (Error, Exception) errorTuple = result.GetErrorSafe();
+            (Error, Exception) tuple = result.GetErrorSafe();
 
-            Error error = errorTuple.GetValue();
+            Error error = tuple.GetValue();
 
             // Assert.
             Assert.True(error is Error);
+            Assert.True(tuple.IsSuccessful());
+            Assert.False(tuple.IsUnsuccesful());
+            Assert.NotNull(tuple.Item1);
+            Assert.Null(tuple.Item2);
         }
 
         [Fact]

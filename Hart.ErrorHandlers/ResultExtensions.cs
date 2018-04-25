@@ -102,9 +102,9 @@ namespace System.Linq
 
         #region Tuple helpers
 
-        public static bool Successful(this (IResult, Exception) tuple) => tuple.Item1 != null && tuple.Item2 == null;
+        public static bool IsSuccessful(this (IResult, Exception) tuple) => tuple.Item1 != null && tuple.Item2 == null;
 
-        public static bool Unsuccesful(this (IResult, Exception) tuple) => !tuple.Successful();
+        public static bool IsUnsuccesful(this (IResult, Exception) tuple) => tuple.IsSuccessful() == false;
 
         /// <summary>
         /// Generic value getter, will have to be casted.
