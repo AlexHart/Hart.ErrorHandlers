@@ -1,6 +1,7 @@
 using Hart.ErrorHandlers;
 using System;
 using Xunit;
+using System.Linq;
 
 namespace ErrorHandlersTests
 {
@@ -18,6 +19,7 @@ namespace ErrorHandlersTests
 
             // Assert.
             Assert.True(result is Error);
+            Assert.True(result.IsError());
         }
 
         [Fact]
@@ -32,6 +34,7 @@ namespace ErrorHandlersTests
             // Assert.
             Assert.True(result is Error);
             Assert.True(result is Error<DivideByZeroException>);
+            Assert.True(result.IsError());
             Assert.Equal(typeof(DivideByZeroException), result.GetResultType());
         }
 
@@ -118,6 +121,136 @@ namespace ErrorHandlersTests
 
             // Assert.
             Assert.Null((result as Success).GetResultType());
+        }
+
+        [Fact]
+        public void ExtractSuccess()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 2);
+            Success successUntyped = result.GetSuccess();
+
+            // Assert.
+            Assert.True(successUntyped is Success);
+            Assert.True(successUntyped is Success<double>);
+        }
+
+        [Fact]
+        public void ExtractSuccessTyped()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 2);
+            Success<double> successTyped = result.GetSuccess<double>();
+
+            // Assert.
+            Assert.True(successTyped is Success);
+            Assert.True(successTyped.IsOk);
+            Assert.False(successTyped.IsVoid);
+        }
+
+        [Fact]
+        public void ExtractError()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 0);
+            Error errorUntyped = result.GetError();
+
+            // Assert.
+            Assert.True(errorUntyped is Error);
+            Assert.True(errorUntyped is Error<DivideByZeroException>);
+        }
+
+        [Fact]
+        public void ExtractErrorTyped()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 0);
+            var errorTyped = result.GetError<DivideByZeroException>();
+
+            // Assert.
+            Assert.True(errorTyped is Error);
+            Assert.True(errorTyped is Error<DivideByZeroException>);
+            Assert.False(errorTyped.IsOk);
+            Assert.False(errorTyped.IsVoid);
+        }
+
+        [Fact]
+        public void ExtractSuccessSafely()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 2);
+            (Success, Exception) tuple = result.GetSuccessSafe();
+
+            Success success = tuple.GetValue();
+
+            // Assert.
+            Assert.True(success is Success);
+        }
+
+        [Fact]
+        public void ExtractSuccessTypedSafely()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 2);
+            (Success<double>, Exception) tuple = result.GetSuccessSafe<double>();
+
+            var success = tuple.GetValue();
+
+            // Assert.
+            Assert.True(success is Success);
+            Assert.True(success is Success<double>);
+            Assert.Equal(5, success.Value);
+        }
+
+        [Fact]
+        public void ExtractErrorSafely()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 0);
+            (Error, Exception) errorTuple = result.GetErrorSafe();
+
+            Error error = errorTuple.GetValue();
+
+            // Assert.
+            Assert.True(error is Error);
+        }
+
+        [Fact]
+        public void ExtractErrorTypedSafely()
+        {
+            // Arrange.
+            var calculator = new Calculator();
+
+            // Act.
+            IResult result = calculator.DoDivision(10, 0);
+            (Error<DivideByZeroException>, Exception) errorTuple = result.GetErrorSafe<DivideByZeroException>();
+
+            Error<DivideByZeroException> error = errorTuple.GetValue();
+
+            // Assert.
+            Assert.True(error is Error<DivideByZeroException>);
+            Assert.Equal(typeof(DivideByZeroException), error.Value.GetType());
         }
     }
 }
