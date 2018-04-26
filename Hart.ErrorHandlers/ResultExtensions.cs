@@ -50,7 +50,7 @@ namespace System.Linq
 
         #region Safe value extractors
 
-        public static (Success, Exception) GetSuccessSafe(this IResult result)
+        public static (Success Success, Exception Exception) GetSuccessSafe(this IResult result)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace System.Linq
             };
         }
 
-        public static (Success<T>, Exception) GetSuccessSafe<T>(this IResult result)
+        public static (Success<T> Value, Exception Exception) GetSuccessSafe<T>(this IResult result)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace System.Linq
             }
         }
 
-        public static (Error, Exception) GetErrorSafe(this IResult result)
+        public static (Error Error, Exception Exception) GetErrorSafe(this IResult result)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace System.Linq
             }
         }
 
-        public static (Error<T>, Exception) GetErrorSafe<T>(this IResult result) where T : Exception
+        public static (Error<T> Error, Exception Exception) GetErrorSafe<T>(this IResult result) where T : Exception
         {
             try
             {

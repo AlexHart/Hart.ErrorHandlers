@@ -64,7 +64,8 @@ namespace ErrorHandlersTests
                          .WithMsWaitOf(200)
                          .WithNumberOfRetries(3)
                          .InvokeSafe(() => 2 + 2)
-                         .Result.GetSuccess<int>()
+                         .Result
+                         .GetSuccess<int>()
                          .Value;
 
             // Assert.
@@ -105,6 +106,8 @@ namespace ErrorHandlersTests
 
             // Assert.
             Assert.NotNull(ex);
+
+            //TODO: Should throw the Invoke exception or the OnFail exception?
             Assert.IsType<ArgumentException>(ex);
         }
 
@@ -113,24 +116,28 @@ namespace ErrorHandlersTests
         {
             // Arrange.
             int res = 0;
+            bool successful = true;
 
             // Act.
             var ex = Record.Exception(() =>
             {
                 int zero = 0;
-                var funcRes = Retrier.Init<int>()
+                RetryResult<IResult> funcRes = Retrier.Init<int>()
                                      .WithMsWaitOf(0)
                                      .WithNumberOfRetries(1)
                                      .OnFail<int>(() => 123)
-                                     .InvokeSafe(() => 2 / zero)
-                                     .Result;
+                                     .InvokeSafe(() => 2 / zero);
 
-                res = funcRes.GetSuccess<int>().Value;
+                // It wasn't successful because it went to the onfail function.
+                successful = funcRes.Successful;
+
+                res = funcRes.Result.GetSuccess<int>().Value;
             });
 
             // Assert.
             Assert.Null(ex);
             Assert.Equal(123, res);
+            Assert.False(successful);
         }
 
         [Fact]

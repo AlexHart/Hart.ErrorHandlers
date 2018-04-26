@@ -29,36 +29,24 @@ namespace Hart.ErrorHandlers.Retry
             return retryConfig;
         }
 
-        private static T retryFunc<T>(Func<T> fun, int retries, int msWait, Func<T> onFail)
+        private static T  retryFunc<T>(Func<T> fun, int retries, int msWait)
         {
             try
             {
                 return fun.Invoke();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (retries > 0)
                 {
                     if (msWait > 0)
                         Thread.Sleep(msWait);
 
-                    return retryFunc(fun, retries - 1, msWait, onFail);
+                    return retryFunc(fun, retries - 1, msWait);
                 }
                 else
                 {
-                    if (onFail != null) 
-                    {
-                        try
-                        {
-                            return onFail.Invoke();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw ex;
-                        }  
-                    }else{
-                        throw;
-                    }
+                    throw;
                 }
             }
         }
@@ -71,14 +59,25 @@ namespace Hart.ErrorHandlers.Retry
                 if (function == null)
                     throw new ArgumentNullException(nameof(function));
 
-                T funcRes = retryFunc(function, config.MaxRetries, config.MsWait, config.OnFail);
+                T funcRes = retryFunc(function, config.MaxRetries, config.MsWait);
                 result = funcRes;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                if (config.OnFail != null)
+                {
+                    try
+                    {
+                        result = config.OnFail();
+                    }
+                    catch (Exception onFailEx)
+                    {
+                        throw onFailEx;
+                    }
+                } else {
+                    throw ex;
+                }
             }
-
             return result;
         }
 
@@ -90,13 +89,30 @@ namespace Hart.ErrorHandlers.Retry
                 if (function == null)
                     throw new ArgumentNullException(nameof(function));
 
-                var funcRes = retryFunc(function, config.MaxRetries, config.MsWait, config.OnFail);
+                var funcRes = retryFunc(function, config.MaxRetries, config.MsWait);
                 res.Result = new Success<T>(funcRes);
                 res.Successful = true;
             }
             catch (Exception ex)
             {
-                res.Result = new Error(ex);
+                if (config.OnFail != null)
+                {
+                    try
+                    {
+                        var onFailRes = config.OnFail.Invoke();
+                        res.Result = new Success<T>(onFailRes);
+                        res.Successful = false;
+                    }
+                    catch (Exception onFailEx)
+                    {
+                        res.Result = new Error(onFailEx);
+                    }
+                }
+                else 
+                {
+                    res.Result = new Error(ex);    
+                }
+				
                 res.Successful = false;
             }
             return res;
