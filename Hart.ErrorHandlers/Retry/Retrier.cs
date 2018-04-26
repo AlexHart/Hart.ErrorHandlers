@@ -65,17 +65,41 @@ namespace Hart.ErrorHandlers.Retry
 
         public static T Invoke<T>(this RetryConfig<T> config, Func<T> function)
         {
+            T result;
             try
             {
                 if (function == null)
                     throw new ArgumentNullException(nameof(function));
 
-                return retryFunc(function, config.MaxRetries, config.MsWait, config.OnFail);
+                T funcRes = retryFunc(function, config.MaxRetries, config.MsWait, config.OnFail);
+                result = funcRes;
             }
             catch (Exception)
             {
                 throw;
             }
+
+            return result;
+        }
+
+        public static RetryResult<IResult> InvokeSafe<T>(this RetryConfig<T> config, Func<T> function)
+        {
+            RetryResult<IResult> res = new RetryResult<IResult>();
+            try
+            {
+                if (function == null)
+                    throw new ArgumentNullException(nameof(function));
+
+                var funcRes = retryFunc(function, config.MaxRetries, config.MsWait, config.OnFail);
+                res.Result = new Success<T>(funcRes);
+                res.Successful = true;
+            }
+            catch (Exception ex)
+            {
+                res.Result = new Error(ex);
+                res.Successful = false;
+            }
+            return res;
         }
 
         public static RetryConfig<T> WithMsWaitOf<T>(this RetryConfig<T> retryConfig, int msWait)

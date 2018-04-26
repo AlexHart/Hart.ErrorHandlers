@@ -9,5 +9,6 @@ namespace Hart.ErrorHandlers
         public int MaxRetries { get; set; } = 3;
 
         public Func<T> OnFail { get; set; }
+
     }
 }

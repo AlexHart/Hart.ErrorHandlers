@@ -63,7 +63,9 @@ namespace ErrorHandlersTests
             res = Retrier.Init<int>()
                          .WithMsWaitOf(200)
                          .WithNumberOfRetries(3)
-                         .Invoke(() => 2 + 2);
+                         .InvokeSafe(() => 2 + 2)
+                         .Result.GetSuccess<int>()
+                         .Value;
 
             // Assert.
             Assert.Equal(4, res);
@@ -107,6 +109,31 @@ namespace ErrorHandlersTests
         }
 
         [Fact]
+        public void RetryFunctionWithExceptionAndFailFallbackSafe()
+        {
+            // Arrange.
+            int res = 0;
+
+            // Act.
+            var ex = Record.Exception(() =>
+            {
+                int zero = 0;
+                var funcRes = Retrier.Init<int>()
+                                     .WithMsWaitOf(0)
+                                     .WithNumberOfRetries(1)
+                                     .OnFail<int>(() => 123)
+                                     .InvokeSafe(() => 2 / zero)
+                                     .Result;
+
+                res = funcRes.GetSuccess<int>().Value;
+            });
+
+            // Assert.
+            Assert.Null(ex);
+            Assert.Equal(123, res);
+        }
+
+        [Fact]
         public void RetryFunctionWithFallback()
         {
             // Arrange & Act.
@@ -125,9 +152,10 @@ namespace ErrorHandlersTests
         [Fact]
         public void RetryFunctionWithFallbackReturnsSuccess()
         {
-            // Arrange & Act.
+            // Arrange.
             int zero = 0;
 
+            // Act.
             var res = Retrier.Init<IResult>()
                              .WithMsWaitOf(0)
                              .WithNumberOfRetries(1)
@@ -142,21 +170,18 @@ namespace ErrorHandlersTests
         }
 
         [Fact]
-        public void RetryFunctionWithFallbackReturnsError()
+        public void RetryFunctionWithInvokeSafe()
         {
-            // Arrange & Act.
+            // Arrange.
             int zero = 0;
 
-            var exception = new ArgumentNullException();
-
-            var res = Retrier.Init<IResult>()
+            // Act.
+            var res = Retrier.Init<int>()
                              .WithMsWaitOf(0)
                              .WithNumberOfRetries(1)
-                             .OnFail<IResult>(() => new Error(exception))
-                             .Invoke(() => {
-                                 int val = 2 / zero;
-                                 return new Success<int>(val);
-                             });
+                             .OnFail<int>(() => throw new ArgumentNullException())
+                             .InvokeSafe(() => 2 / zero)
+                             .Result;
 
             // Assert.
             Assert.True(res is Error);
