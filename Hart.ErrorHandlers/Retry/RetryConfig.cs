@@ -19,5 +19,10 @@ namespace Hart.ErrorHandlers
         /// <remarks>A number to high will cause a StackOverflowException</remarks>
         public int MaxRetries { get; set; } = 3;
 
+        /// <summary>
+        /// Keep retrying indefenitely.
+        /// </summary>
+        /// <value><c>true</c> if retry forever; otherwise, <c>false</c>.</value>
+        public bool RetryForever { get; set; } = false;
     }
 }

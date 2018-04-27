@@ -307,5 +307,58 @@ namespace ErrorHandlersTests
             Assert.Equal(1, res.RetryInfo.Executions);
         }
 
+        [Fact]
+        public void RetryForeverConfigTrue() {
+            // Arrange & Act.
+            var config = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .RetryUntilSuccessful();
+
+            // Assert.
+            Assert.True(config.RetryForever);
+        }
+
+        [Fact]
+        public void RetryForeverConfigFalse()
+        {
+            // Arrange & Act.
+            var config = Retrier.Init();
+
+            // Assert.
+            Assert.False(config.RetryForever);
+        }
+
+        [Fact]
+        public void RetryForeverTrue()
+        {
+            // Arrange.
+            int i = 0;
+            int zero = 0;
+            int expectedReturn = 1101;
+            int iterations = 10;
+
+            Func<int> func = () =>
+            {
+                i += 1;
+                if (i == iterations)
+                    return expectedReturn;
+                else
+                    return i / zero;
+            };
+
+            // Act.
+            var result = Retrier.Init()
+                                .WithMsWaitOf(0)
+                                .RetryUntilSuccessful()
+                                .Invoke(func);
+
+            // Assert.
+            Assert.Equal(expectedReturn, result.Result);
+            Assert.Equal(iterations, result.RetryInfo.Executions);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(iterations - 1, result.RetryInfo.Exceptions.Count());
+            Assert.False(result.Successful);
+        }
+
     }
 }

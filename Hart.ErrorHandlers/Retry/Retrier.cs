@@ -28,35 +28,41 @@ namespace Hart.ErrorHandlers.Retry
             return retryConfig;
         }
 
-        private static RetryResult<T> retryFunc<T>(Func<T> fun, int retries, int msWait, RetryInfo retryInfo)
+        private static RetryResult<T> retryFunc<T>(Func<T> fun, RetryConfig config)
         {
-            retryInfo.Executions++;
+			RetryInfo retryInfo = new RetryInfo();
+            RetryResult<T> result = new RetryResult<T>(default(T), retryInfo);
 
-            try
-            {
-                var funcRes = fun.Invoke();
-                return new RetryResult<T>(funcRes, retryInfo);
-            }
-            catch (Exception ex)
-            {
-                retryInfo.Exceptions.Add(ex);
+            bool isOk = false;
+            int retriesRemaining = config.MaxRetries;
 
-                if (retries == 0)
+            while (!isOk && (retriesRemaining >= 0 || config.RetryForever))
+            {
+                result.RetryInfo.Executions++;
+
+                try
                 {
-                    return new RetryResult<T>(default(T), retryInfo);
+                    result.Result = fun.Invoke();
+                    isOk = true;
                 }
-                else
-                { 
-                    if (msWait > 0)
-                        Thread.Sleep(msWait);
+                catch (Exception ex)
+                {
+                    result.RetryInfo.Exceptions.Add(ex);
 
-                    return retryFunc(fun, retries - 1, msWait, retryInfo);
+                    // Wait before retrying.
+                    if (config.MsWait > 0)
+                        Thread.Sleep(config.MsWait);
                 }
+				
+                retriesRemaining--;
             }
+
+            return result;
         }
 
         private static RetryResult retryAction(Action fun, int retries, int msWait, RetryInfo retryInfo)
         {
+            //TODO: Remove recursion for actions too to avoid stack overflows.
             retryInfo.Executions++;
 
             try
@@ -87,7 +93,7 @@ namespace Hart.ErrorHandlers.Retry
             if (function == null)
                 throw new ArgumentNullException(nameof(function));
 
-            return retryFunc(function, config.MaxRetries, config.MsWait, new RetryInfo());
+            return retryFunc(function, config);
         }
 
         public static RetryResult Invoke(this RetryConfig config, Action action)

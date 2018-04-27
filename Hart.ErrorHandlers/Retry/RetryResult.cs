@@ -49,7 +49,7 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="retryInfo"></param>
         public RetryResult(T result, RetryInfo retryInfo) {
             Result = result;
-            RetryInfo = retryInfo;
+            RetryInfo = new RetryInfo();
         }
     }
 

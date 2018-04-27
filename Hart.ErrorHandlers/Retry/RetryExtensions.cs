@@ -19,6 +19,11 @@ namespace Hart.ErrorHandlers.Retry
             return retryConfig;
         }
 
+        public static RetryConfig RetryUntilSuccessful(this RetryConfig retryConfig) {
+            retryConfig.RetryForever = true;
+            return retryConfig;
+        }
+
         public static RetryResult<T> WithFallBack<T>(this RetryResult<T> result, Func<T> fallback)
         {
             if (fallback == null)
