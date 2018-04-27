@@ -2,6 +2,7 @@ using Hart.ErrorHandlers;
 using System;
 using Xunit;
 using System.Linq;
+using Hart.ErrorHandlers.Results;
 
 namespace ErrorHandlersTests
 {

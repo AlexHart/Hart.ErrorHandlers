@@ -4,6 +4,7 @@ using Xunit;
 using System.Linq;
 using Hart.ErrorHandlers.Retry;
 using Xunit.Sdk;
+using System.Diagnostics;
 
 namespace ErrorHandlersTests
 {
@@ -120,7 +121,7 @@ namespace ErrorHandlersTests
                                                 .WithMsWaitOf(0)
                                                 .WithNumberOfRetries(2)
                                                 .Invoke(() => 10 / 2)
-                                                .WithFallBackFunction(() => 1 + 1);
+                                                .WithFallBack(() => 1 + 1);
             // Assert.
             Assert.Equal(5, result.Result);
             Assert.True(result.Successful);
@@ -151,7 +152,7 @@ namespace ErrorHandlersTests
                              .WithMsWaitOf(0)
                              .WithNumberOfRetries(1)
                              .Invoke(() => 2 / zero)
-                             .WithFallBackFunction(() => throw new ArgumentException("test"));
+                             .WithFallBack(() => throw new ArgumentException("test"));
 
             // Assert.
             Assert.Equal(0, res.Result);
@@ -170,7 +171,7 @@ namespace ErrorHandlersTests
                              .WithMsWaitOf(0)
                              .WithNumberOfRetries(1)
                              .Invoke(() => 2 / zero)
-                             .WithFallBackFunction(() => 2 * 2);
+                             .WithFallBack(() => 2 * 2);
 
             // Assert.
             Assert.Equal(4, res.Result);
@@ -197,6 +198,113 @@ namespace ErrorHandlersTests
             Assert.True(res.SuccessfulFallback);
             Assert.IsType<DivideByZeroException>(res.RetryInfo.Exceptions.FirstOrDefault());
             Assert.Null(res.FallBackException);
+        }
+
+        [Fact]
+        public void RetryActionSuccessful()
+        {
+            // Arrange & Act.
+            var res = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .WithNumberOfRetries(1)
+                             .Invoke(() => Trace.WriteLine("hello"));
+
+            // Assert.
+            Assert.True(res.Successful);
+            Assert.False(res.ExecutedFallBack);
+        }
+
+        [Fact]
+        public void RetryActionFailure()
+        {
+            // Arrange & Act.
+            var res = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .WithNumberOfRetries(1)
+                             .Invoke(() => {
+                                 throw new NullReferenceException();
+                             });
+
+            // Assert.
+            Assert.False(res.Successful);
+            Assert.False(res.ExecutedFallBack);
+            Assert.IsType<NullReferenceException>(res.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(2, res.RetryInfo.Executions);
+        }
+
+        [Fact]
+        public void RetryActionFailureWithSuccessfulFallback()
+        {
+            // Arrange & Act.
+            var res = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .WithNumberOfRetries(1)
+                             .Invoke(() => {
+                                 throw new NullReferenceException();
+                             })
+                             .WithFallBack(() => {
+                                 // Empty action.
+                             });
+
+            // Assert.
+            Assert.False(res.Successful);
+            Assert.True(res.ExecutedFallBack);
+            Assert.True(res.SuccessfulFallback);
+            Assert.IsType<NullReferenceException>(res.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(2, res.RetryInfo.Executions);
+        }
+
+        [Fact]
+        public void RetryActionFailureWithFailedFallback()
+        {
+            // Arrange & Act.
+            var res = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .WithNumberOfRetries(1)
+                             .Invoke(() => {
+                                 throw new NullReferenceException();
+                             })
+                             .WithFallBack(() => {
+                                 throw new DivideByZeroException();
+                             });
+
+            // Assert.
+            Assert.False(res.Successful);
+            Assert.True(res.ExecutedFallBack);
+            Assert.False(res.SuccessfulFallback);
+            Assert.IsType<DivideByZeroException>(res.FallBackException);
+            Assert.IsType<NullReferenceException>(res.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(2, res.RetryInfo.Executions);
+        }
+
+        [Fact]
+        public void RetryActionFailureWithZeroRetries()
+        {
+            // Arrange & Act.
+            var res = Retrier.Init()
+                             .WithNumberOfRetries(0)
+                             .Invoke(() => {
+                                 throw new NullReferenceException();
+                             });
+
+            // Assert.
+            Assert.False(res.Successful);
+            Assert.Equal(1, res.RetryInfo.Executions);
+        }
+
+        [Fact]
+        public void RetryFunctionFailureWithZeroRetries()
+        {
+            // Arrange & Act.
+            var res = Retrier.Init()
+                             .WithNumberOfRetries(0)
+                             .Invoke<int>(() => {
+                                 throw new NullReferenceException();
+                             });
+
+            // Assert.
+            Assert.False(res.Successful);
+            Assert.Equal(1, res.RetryInfo.Executions);
         }
 
     }

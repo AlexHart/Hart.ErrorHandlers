@@ -19,7 +19,7 @@ namespace Hart.ErrorHandlers.Retry
             return retryConfig;
         }
 
-        public static RetryResult<T> WithFallBackFunction<T>(this RetryResult<T> result, Func<T> fallback)
+        public static RetryResult<T> WithFallBack<T>(this RetryResult<T> result, Func<T> fallback)
         {
             if (fallback == null)
                 throw new ArgumentNullException(nameof(fallback));
@@ -51,6 +51,27 @@ namespace Hart.ErrorHandlers.Retry
                 {
                     result.ExecutedFallBack = true;
                     result.Result = defaultValue;
+                }
+                catch (Exception ex)
+                {
+                    result.FallBackException = ex;
+                }
+            }
+
+            return result;
+        }
+
+        public static RetryResult WithFallBack(this RetryResult result, Action fallback)
+        {
+            if (fallback == null)
+                throw new ArgumentNullException(nameof(fallback));
+
+            if (!result.Successful)
+            {
+                try
+                {
+                    result.ExecutedFallBack = true;
+                    fallback.Invoke();
                 }
                 catch (Exception ex)
                 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Hart.ErrorHandlers;
 
-namespace System.Linq
+namespace Hart.ErrorHandlers.Results
 {
     public static class ResultExtensions
     {
