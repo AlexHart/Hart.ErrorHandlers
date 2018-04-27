@@ -1,13 +1,22 @@
 ﻿using System;
-namespace Hart.ErrorHandlers
+using System.Collections.Generic;
+using System.Text;
+
+namespace Hart.ErrorHandlers.Retry
 {
     public class RetryResult<T>
     {
 
-        public T Result { get; set; }
+        public T Result { get; private set; }
 
-        public bool Successful { get; set; }
+        public RetryInfo RetryInfo { get; private set; }
 
-        //TODO: Implement a counter for the number of tries.
+        public bool Successful => RetryInfo.Successful;
+
+        public RetryResult(T result, RetryInfo retryInfo) {
+            Result = result;
+            RetryInfo = retryInfo;
+        }
+
     }
 }

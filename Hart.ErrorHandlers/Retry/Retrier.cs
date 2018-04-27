@@ -9,135 +9,97 @@ namespace Hart.ErrorHandlers.Retry
 
     public static class Retrier
     {
-        public static RetryConfig<T> Init<T>() {
-            return Init<T>(0, 3, null);
+        public static RetryConfig Init() {
+            return Init(0, 3);
         }
 
-        public static RetryConfig<T> Init<T>(int msWait, int maxRetries, Func<T> onFail = null) {
-            return new RetryConfig<T>()
+        public static RetryConfig Init(int msWait, int maxRetries) {
+            return new RetryConfig()
             {
                 MsWait = msWait,
-                MaxRetries = maxRetries,
-                OnFail = onFail
+                MaxRetries = maxRetries
             };
         }
 
-        public static RetryConfig<T> Init<T>(RetryConfig<T> retryConfig) {
-            if (retryConfig.OnFail == null)
-                throw new ArgumentNullException(nameof(retryConfig));
-            
+        public static RetryConfig Init(RetryConfig retryConfig) {           
             return retryConfig;
         }
 
-        private static T  retryFunc<T>(Func<T> fun, int retries, int msWait)
+        private static RetryResult<T> retryFunc<T>(Func<T> fun, int retries, int msWait, RetryInfo retryInfo)
         {
+            retryInfo.Executions++;
+
             try
             {
-                return fun.Invoke();
+                var funcRes = fun.Invoke();
+                return new RetryResult<T>(funcRes, retryInfo);
             }
             catch (Exception ex)
             {
-                if (retries > 0)
+                retryInfo.Exceptions.Add(ex);
+
+                if (retries == 0)
                 {
+                    return new RetryResult<T>(default(T), retryInfo);
+                }
+                else
+                { 
                     if (msWait > 0)
                         Thread.Sleep(msWait);
 
-                    return retryFunc(fun, retries - 1, msWait);
-                }
-                else
-                {
-                    throw;
+                    return retryFunc(fun, retries - 1, msWait, retryInfo);
                 }
             }
         }
 
-        public static T Invoke<T>(this RetryConfig<T> config, Func<T> function)
+        public static RetryResult<T> Invoke<T>(this RetryConfig config, Func<T> function)
         {
-            T result;
-            try
-            {
-                if (function == null)
-                    throw new ArgumentNullException(nameof(function));
+            if (function == null)
+                throw new ArgumentNullException(nameof(function));
 
-                T funcRes = retryFunc(function, config.MaxRetries, config.MsWait);
-                result = funcRes;
-            }
-            catch (Exception ex)
-            {
-                if (config.OnFail != null)
-                {
-                    try
-                    {
-                        result = config.OnFail();
-                    }
-                    catch (Exception onFailEx)
-                    {
-                        throw onFailEx;
-                    }
-                } else {
-                    throw ex;
-                }
-            }
-            return result;
+            return retryFunc(function, config.MaxRetries, config.MsWait, new RetryInfo());
         }
 
-        public static RetryResult<IResult> InvokeSafe<T>(this RetryConfig<T> config, Func<T> function)
-        {
-            RetryResult<IResult> res = new RetryResult<IResult>();
-            try
-            {
-                if (function == null)
-                    throw new ArgumentNullException(nameof(function));
+        //public static RetryInfo InvokeSafe<T>(this RetryConfig config, Func<T> function)
+        //{
+        //    RetryInfo res = new RetryInfo();
+        //    try
+        //    {
+        //        if (function == null)
+        //            throw new ArgumentNullException(nameof(function));
 
-                var funcRes = retryFunc(function, config.MaxRetries, config.MsWait);
-                res.Result = new Success<T>(funcRes);
-                res.Successful = true;
-            }
-            catch (Exception ex)
-            {
-                if (config.OnFail != null)
-                {
-                    try
-                    {
-                        var onFailRes = config.OnFail.Invoke();
-                        res.Result = new Success<T>(onFailRes);
-                        res.Successful = false;
-                    }
-                    catch (Exception onFailEx)
-                    {
-                        res.Result = new Error(onFailEx);
-                    }
-                }
-                else 
-                {
-                    res.Result = new Error(ex);    
-                }
-				
-                res.Successful = false;
-            }
-            return res;
-        }
+        //        var funcRes = retryFunc(function, config.MaxRetries, config.MsWait);
+        //        res.Result = new Success<T>(funcRes.Result);
+        //        res.Successful = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        res.Result = new Error(ex);
+        //        res.Successful = false;
+        //    }
+        //    return res;
+        //}
 
-        public static RetryConfig<T> WithMsWaitOf<T>(this RetryConfig<T> retryConfig, int msWait)
+        public static RetryConfig WithMsWaitOf(this RetryConfig retryConfig, int msWait)
         {
             retryConfig.MsWait = msWait;
             return retryConfig;
         }
 
-        public static RetryConfig<T> WithNumberOfRetries<T>(this RetryConfig<T> retryConfig, int retries)
+        public static RetryConfig WithNumberOfRetries(this RetryConfig retryConfig, int retries)
         {
             retryConfig.MaxRetries = retries;
             return retryConfig;
         }
 
-        public static RetryConfig<T> OnFail<T>(this RetryConfig<T> retryConfig, Func<T> onFail)
-        {
-            if (onFail == null)
-                throw new ArgumentNullException(nameof(onFail));
+        //public static RetryConfig<T> OnFail<T>(this RetryConfig<T> retryConfig, Func<T> onFail)
+        //{
+        //    if (onFail == null)
+        //        throw new ArgumentNullException(nameof(onFail));
                 
-            retryConfig.OnFail = onFail;
-            return retryConfig;
-        }
+        //    retryConfig.OnFail = onFail;
+        //    return retryConfig;
+        //}
 
     }
 }
