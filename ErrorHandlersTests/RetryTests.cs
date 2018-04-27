@@ -39,7 +39,6 @@ namespace ErrorHandlersTests
             Assert.Equal(1, res.RetryInfo.Executions);
             Assert.Equal(4, res.Result);
             Assert.True(res.Successful);
-            Assert.True(res.RetryInfo.Successful);
             Assert.Empty(res.RetryInfo.Exceptions);
         }
 
@@ -58,10 +57,7 @@ namespace ErrorHandlersTests
         [Fact]
         public void InitRetryConfig()
         {
-            // Arrange
-            Func<int> onFail = () => 2 + 2;
-
-			// Act.
+            // Arrange && Act.
             var config = Retrier.Init(200, 10);
 
             // Assert.
@@ -69,24 +65,36 @@ namespace ErrorHandlersTests
             Assert.Equal(10, config.MaxRetries);
         }
 
-        //[Fact]
-        //public void RetryFunctionOk()
-        //{
-        //    // Arrange
-        //    int res = 0;
+        [Fact]
+        public void InitRetryConfigFluent()
+        {
+            // Arrange && Act.
+            var config = Retrier.Init()
+                                .WithNumberOfRetries(10)
+                                .WithMsWaitOf(1000);
 
-        //    // Act.
-        //    res = Retrier.Init()
-        //                 .WithMsWaitOf(200)
-        //                 .WithNumberOfRetries(3)
-        //                 .InvokeSafe(() => 2 + 2)
-        //                 .Result
-        //                 .GetSuccess<int>()
-        //                 .Value;
+            // Assert.
+            Assert.Equal(10, config.MaxRetries);
+            Assert.Equal(1000, config.MsWait);
+        }
 
-        //    // Assert.
-        //    Assert.Equal(4, res);
-        //}
+        [Fact]
+        public void InitRetryConfigDirectly()
+        {
+            // Arrange.
+            var retryConfig = new RetryConfig()
+            {
+                MaxRetries = 10,
+                MsWait = 1000
+            };
+
+            // Act.
+            var config = Retrier.Init(retryConfig);
+
+            // Assert.
+            Assert.Equal(10, config.MaxRetries);
+            Assert.Equal(1000, config.MsWait);
+        }
 
         [Fact]
         public void CountExceptionsAndRetries()
@@ -104,110 +112,92 @@ namespace ErrorHandlersTests
             Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
         }
 
-        //[Fact]
-        //public void RetryFunctionWithExceptionAndFailFallback()
-        //{
-        //    // Arrange & Act.
-        //    var ex = Record.Exception(() =>
-        //    {
-        //        int zero = 0;
-        //        int res = Retrier.Init()
-        //                         .WithMsWaitOf(0)
-        //                         .WithNumberOfRetries(1)
-        //                         .OnFail<int>(() => throw new ArgumentException("test"))
-        //                         .Invoke(() => 2 / zero);
-        //    });
+        [Fact]
+        public void SuccessfulFunctionDoesntGoToFallbackFunction()
+        {
+            // Arrange & Act.
+            RetryResult<int> result = Retrier.Init()
+                                                .WithMsWaitOf(0)
+                                                .WithNumberOfRetries(2)
+                                                .Invoke(() => 10 / 2)
+                                                .WithFallBackFunction(() => 1 + 1);
+            // Assert.
+            Assert.Equal(5, result.Result);
+            Assert.True(result.Successful);
+            Assert.Equal(1, result.RetryInfo.Executions);
+        }
 
-        //    // Assert.
-        //    Assert.NotNull(ex);
+        [Fact]
+        public void SuccessfulFunctionDoesntReturnFallbackValue()
+        {
+            // Arrange & Act.
+            RetryResult<int> result = Retrier.Init()
+                                                .WithMsWaitOf(0)
+                                                .WithNumberOfRetries(2)
+                                                .Invoke(() => 10 / 2)
+                                                .WithFallBackValue(1000);
+            // Assert.
+            Assert.Equal(5, result.Result);
+            Assert.True(result.Successful);
+            Assert.Equal(1, result.RetryInfo.Executions);
+        }
 
-        //    //TODO: Should throw the Invoke exception or the OnFail exception?
-        //    Assert.IsType<ArgumentException>(ex);
-        //}
+        [Fact]
+        public void RetryFunctionWithExceptionAndFailFallback()
+        {
+            // Arrange & Act.
+            int zero = 0;
+            var res = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .WithNumberOfRetries(1)
+                             .Invoke(() => 2 / zero)
+                             .WithFallBackFunction(() => throw new ArgumentException("test"));
 
-        //[Fact]
-        //public void RetryFunctionWithExceptionAndFailFallbackSafe()
-        //{
-        //    // Arrange.
-        //    int res = 0;
-        //    bool successful = true;
+            // Assert.
+            Assert.Equal(0, res.Result);
+            Assert.False(res.Successful);
+            Assert.False(res.SuccessfulFallback);
+            Assert.IsType<DivideByZeroException>(res.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.IsType<ArgumentException>(res.FallBackException);
+        }
 
-        //    // Act.
-        //    var ex = Record.Exception(() =>
-        //    {
-        //        int zero = 0;
-        //        RetryResult<IResult> funcRes = Retrier.Init<int>()
-        //                             .WithMsWaitOf(0)
-        //                             .WithNumberOfRetries(1)
-        //                             .OnFail<int>(() => 123)
-        //                             .InvokeSafe(() => 2 / zero);
+        [Fact]
+        public void RetryFunctionWithExceptionAndSuccessfulFallbackFunction()
+        {
+            // Arrange & Act.
+            int zero = 0;
+            var res = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .WithNumberOfRetries(1)
+                             .Invoke(() => 2 / zero)
+                             .WithFallBackFunction(() => 2 * 2);
 
-        //        // It wasn't successful because it went to the onfail function.
-        //        successful = funcRes.Successful;
+            // Assert.
+            Assert.Equal(4, res.Result);
+            Assert.False(res.Successful);
+            Assert.True(res.SuccessfulFallback);
+            Assert.IsType<DivideByZeroException>(res.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Null(res.FallBackException);
+        }
 
-        //        res = funcRes.Result.GetSuccess<int>().Value;
-        //    });
+        [Fact]
+        public void RetryFunctionWithExceptionAndSuccessfulFallbackValue()
+        {
+            // Arrange & Act.
+            int zero = 0;
+            var res = Retrier.Init()
+                             .WithMsWaitOf(0)
+                             .WithNumberOfRetries(1)
+                             .Invoke(() => 2 / zero)
+                             .WithFallBackValue(33);
 
-        //    // Assert.
-        //    Assert.Null(ex);
-        //    Assert.Equal(123, res);
-        //    Assert.False(successful);
-        //}
-
-        //[Fact]
-        //public void RetryFunctionWithFallback()
-        //{
-        //    // Arrange & Act.
-        //    int zero = 0;
-
-        //    int res = Retrier.Init()
-        //                     .WithMsWaitOf(0)
-        //                     .WithNumberOfRetries(1)
-        //                     .OnFail<int>(() => 123)
-        //                     .Invoke(() => 2 / zero);
-
-        //    // Assert.
-        //    Assert.Equal(123, res);
-        //}
-
-        //[Fact]
-        //public void RetryFunctionWithFallbackReturnsSuccess()
-        //{
-        //    // Arrange.
-        //    int zero = 0;
-
-        //    // Act.
-        //    var res = Retrier.Init()
-        //                     .WithMsWaitOf(0)
-        //                     .WithNumberOfRetries(1)
-        //                     .OnFail<IResult>(() => new Success())
-        //                     .Invoke(() => {
-        //                         int val = 2 / zero;
-        //                         return new Success<int>(val);
-        //                     });
-
-        //    // Assert.
-        //    Assert.True(res is Success);
-        //}
-
-        //[Fact]
-        //public void RetryFunctionWithInvokeSafe()
-        //{
-        //    // Arrange.
-        //    int zero = 0;
-
-        //    // Act.
-        //    var res = Retrier.Init()
-        //                     .WithMsWaitOf(0)
-        //                     .WithNumberOfRetries(1)
-        //                     .OnFail<int>(() => throw new ArgumentNullException())
-        //                     .InvokeSafe(() => 2 / zero)
-        //                     .Result;
-
-        //    // Assert.
-        //    Assert.True(res is Error);
-        //    Assert.Equal(typeof(ArgumentNullException), (res as Error).Value.GetType());
-        //}
+            // Assert.
+            Assert.Equal(33, res.Result);
+            Assert.False(res.Successful);
+            Assert.True(res.SuccessfulFallback);
+            Assert.IsType<DivideByZeroException>(res.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Null(res.FallBackException);
+        }
 
     }
 }
