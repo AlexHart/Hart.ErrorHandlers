@@ -5,12 +5,35 @@ using System.Linq;
 using Hart.ErrorHandlers.Retry;
 using Xunit.Sdk;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace ErrorHandlersTests
 {
 
     public class RetrierTests
     {
+
+        [Fact]
+        public void RetryWithInvokeDirectly()
+        {
+            // Arrange
+            var config = new RetryConfig()
+            {
+                MaxRetries = 10,
+                MsWait = 1000,
+                RetryForever = false
+            };
+
+            Func<int> fun = () => 2 + 2;
+
+            // Act.
+            var res = Retrier.Invoke(config, fun);
+
+            // Assert.
+            Assert.Equal(4, res.Result);
+            Assert.Equal(1, res.RetryInfo.Executions);
+            Assert.True(res.Successful);
+        }
 
         [Fact]
         public void RetryWithDefaultConfig()
@@ -389,6 +412,87 @@ namespace ErrorHandlersTests
             Assert.Equal(iterations - 1, result.RetryInfo.Exceptions.Count());
             Assert.False(result.Successful);
         }
+
+        //[Fact]
+        //public void RetryAsyncFunction()
+        //{
+        //    // Arrange && Act.
+        //    var result = Retrier.Init()
+        //                        .Invoke(async () => await FakeService.GetHelloWorldAsync());
+
+        //    // Assert.
+        //    Assert.Equal("Hello world", result.Result.Result);
+        //    Assert.Equal(1, result.RetryInfo.Executions);
+        //    Assert.True(result.Successful);
+        //}
+
+        //[Fact]
+        //public void RetryAsyncAction()
+        //{
+        //    // Arrange && Act.
+        //    var result = Retrier.Init()
+        //                        .Invoke(async () => await FakeService.DoFakeCalculationsAsync());
+
+        //    // Assert.
+        //    Assert.Equal(1, result.RetryInfo.Executions);
+        //    Assert.True(result.Successful);
+        //}
+
+        //[Fact]
+        //public void RetryAsyncFailFunction()
+        //{
+        //    // Arrange.
+        //    int zero = 0;
+        //    Task<int> t = new Task<int>(() => 2 / zero);
+
+        //    // Act.
+        //    var result = Retrier.Init()
+        //                        .WithNumberOfRetries(1)
+        //                        .Invoke(async () => await t);
+
+        //    // Assert.
+        //    Assert.False(result.Successful);
+        //    Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+        //    Assert.Equal(2, result.RetryInfo.Executions);
+        //}
+
+        //[Fact]
+        //public async void RetryAsyncFailAction()
+        //{
+        //    // Arrange.
+        //    Task t = new Task(() => {
+        //        throw new DivideByZeroException();
+        //    });
+
+        //    // Act.
+        //    var result = Retrier.Init()
+        //                        .WithNumberOfRetries(1)
+        //                        .Invoke(async () => await t);
+
+        //    // Assert.
+        //    Assert.False(result.Successful);
+        //    Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+        //    Assert.Equal(2, result.RetryInfo.Executions); ;
+        //}
+
+        //[Fact]
+        //public void RetryAsyncFallback()
+        //{
+        //    // Arrange.
+        //    int zero = 0;
+
+        //    // Act.
+        //    var result = Retrier.Init()
+        //                        .WithNumberOfRetries(0)
+        //                        .WithMsWaitOf(0)
+        //                        .Invoke(() => 2 / zero)
+        //                        .WithFallBack(async () => await FakeService.GetIntAsync());
+
+        //    // Assert.
+        //    Assert.Equal(1, result.Result.Result);
+        //    Assert.Equal(2, result.RetryInfo.Executions);
+        //    Assert.False(result.Successful);
+        //}
 
     }
 }
