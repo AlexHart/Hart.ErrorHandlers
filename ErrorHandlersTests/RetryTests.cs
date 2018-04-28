@@ -329,7 +329,7 @@ namespace ErrorHandlersTests
         }
 
         [Fact]
-        public void RetryForeverTrue()
+        public void RetryForeverFunctionTrue()
         {
             // Arrange.
             int i = 0;
@@ -354,6 +354,36 @@ namespace ErrorHandlersTests
 
             // Assert.
             Assert.Equal(expectedReturn, result.Result);
+            Assert.Equal(iterations, result.RetryInfo.Executions);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(iterations - 1, result.RetryInfo.Exceptions.Count());
+            Assert.False(result.Successful);
+        }
+
+        [Fact]
+        public void RetryForeverActionTrue()
+        {
+            // Arrange.
+            int i = 0;
+            int zero = 0;
+            int iterations = 10;
+
+            Action func = () =>
+            {
+                i += 1;
+                if (i != iterations)
+                {
+                    int x = i / zero;
+                }
+            };
+
+            // Act.
+            var result = Retrier.Init()
+                                .WithMsWaitOf(0)
+                                .RetryUntilSuccessful()
+                                .Invoke(func);
+
+            // Assert.
             Assert.Equal(iterations, result.RetryInfo.Executions);
             Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
             Assert.Equal(iterations - 1, result.RetryInfo.Exceptions.Count());

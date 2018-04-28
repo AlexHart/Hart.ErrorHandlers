@@ -60,32 +60,35 @@ namespace Hart.ErrorHandlers.Retry
             return result;
         }
 
-        private static RetryResult retryAction(Action fun, int retries, int msWait, RetryInfo retryInfo)
+        private static RetryResult retryAction(Action fun, RetryConfig config)
         {
-            //TODO: Remove recursion for actions too to avoid stack overflows.
-            retryInfo.Executions++;
+            RetryInfo retryInfo = new RetryInfo();
+            RetryResult result = new RetryResult(retryInfo);
 
-            try
-            {
-                fun.Invoke();
-                return new RetryResult(retryInfo);
-            }
-            catch (Exception ex)
-            {
-                retryInfo.Exceptions.Add(ex);
+            bool isOk = false;
+            int retriesRemaining = config.MaxRetries;
 
-                if (retries == 0)
+            while (!isOk && (retriesRemaining >= 0 || config.RetryForever)) {
+                result.RetryInfo.Executions++;
+
+                try
                 {
-                    return new RetryResult(retryInfo);
+                    fun.Invoke();
+                    isOk = true;
                 }
-                else
+                catch (Exception ex)
                 {
-                    if (msWait > 0)
-                        Thread.Sleep(msWait);
+                    result.RetryInfo.Exceptions.Add(ex);
 
-                    return retryAction(fun, retries - 1, msWait, retryInfo);
+                    // Wait before retrying.
+                    if (config.MsWait > 0)
+                        Thread.Sleep(config.MsWait);
                 }
+
+                retriesRemaining--;
             }
+
+            return result;
         }
 
         public static RetryResult<T> Invoke<T>(this RetryConfig config, Func<T> function)
@@ -101,7 +104,7 @@ namespace Hart.ErrorHandlers.Retry
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
-            return retryAction(action, config.MaxRetries, config.MsWait, new RetryInfo());
+            return retryAction(action, config);
         }
 
     }
