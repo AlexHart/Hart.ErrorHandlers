@@ -1,9 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Hart.ErrorHandlers.Retry
 {
+
+    //TODO: Add comments.
+
+    /// <summary>
+    /// Extensions for retrying functionality.
+    /// </summary>
     public static class RetryExtensions
     {
 
@@ -43,6 +48,34 @@ namespace Hart.ErrorHandlers.Retry
             }
 
             return result;
+        }
+
+        public static async Task<RetryResult<T>> WithFallBackAsync<T>(this RetryResult<T> result, Func<Task<T>> fallback)
+        {
+            if (fallback == null)
+                throw new ArgumentNullException(nameof(fallback));
+
+            if (!result.Successful)
+            {
+                try
+                {
+                    result.ExecutedFallBack = true;
+                    result.RetryInfo.Executions++;
+
+                    result.Result = await fallback.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    result.FallBackException = ex;
+                }
+            }
+
+            return result;
+        }
+
+        public static RetryResult<T> WaitForValue<T>(this Task<RetryResult<T>> result)
+        {
+            return result.Result;
         }
 
         public static RetryResult<T> WithFallBackValue<T>(this RetryResult<T> result, T defaultValue)

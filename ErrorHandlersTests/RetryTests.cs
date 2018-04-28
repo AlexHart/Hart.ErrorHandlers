@@ -413,86 +413,179 @@ namespace ErrorHandlersTests
             Assert.False(result.Successful);
         }
 
-        //[Fact]
-        //public void RetryAsyncFunction()
-        //{
-        //    // Arrange && Act.
-        //    var result = Retrier.Init()
-        //                        .Invoke(async () => await FakeService.GetHelloWorldAsync());
+        [Fact]
+        public void RetryAsyncFunction()
+        {
+            // Arrange && Act.
+            var result = Retrier.Init()
+                                .Invoke(async () => await FakeService.GetHelloWorldAsync());
 
-        //    // Assert.
-        //    Assert.Equal("Hello world", result.Result.Result);
-        //    Assert.Equal(1, result.RetryInfo.Executions);
-        //    Assert.True(result.Successful);
-        //}
+            // Assert.
+            Assert.Equal("Hello world", result.Result.Result);
+            Assert.Equal(1, result.RetryInfo.Executions);
+            Assert.True(result.Successful);
+        }
 
-        //[Fact]
-        //public void RetryAsyncAction()
-        //{
-        //    // Arrange && Act.
-        //    var result = Retrier.Init()
-        //                        .Invoke(async () => await FakeService.DoFakeCalculationsAsync());
+        [Fact]
+        public void RetryAsyncAction()
+        {
+            // Arrange && Act.
+            var result = Retrier.Init()
+                                .Invoke(async () => await FakeService.DoFakeCalculationsAsync());
 
-        //    // Assert.
-        //    Assert.Equal(1, result.RetryInfo.Executions);
-        //    Assert.True(result.Successful);
-        //}
+            // Assert.
+            Assert.Equal(1, result.RetryInfo.Executions);
+            Assert.True(result.Successful);
+        }
 
-        //[Fact]
-        //public void RetryAsyncFailFunction()
-        //{
-        //    // Arrange.
-        //    int zero = 0;
-        //    Task<int> t = new Task<int>(() => 2 / zero);
+        [Fact]
+        public async void RetryAsyncFailFunctionWithRegularAwait()
+        {
+            // Arrange & Act.
+            var result = await Retrier.Init()
+                                .WithNumberOfRetries(1)
+                                .InvokeAsync(FakeService.DivideByZeroExceptionAsync);
 
-        //    // Act.
-        //    var result = Retrier.Init()
-        //                        .WithNumberOfRetries(1)
-        //                        .Invoke(async () => await t);
+            // Assert.
+            Assert.False(result.Successful);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(2, result.RetryInfo.Executions);
+        }
 
-        //    // Assert.
-        //    Assert.False(result.Successful);
-        //    Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
-        //    Assert.Equal(2, result.RetryInfo.Executions);
-        //}
+        [Fact]
+        public void RetryAsyncFailFunction()
+        {
+            // Arrange & Act.
+            var result = Retrier.Init()
+                                .WithNumberOfRetries(1)
+                                .InvokeAsync(FakeService.DivideByZeroExceptionAsync)
+                                .WaitForValue();
 
-        //[Fact]
-        //public async void RetryAsyncFailAction()
-        //{
-        //    // Arrange.
-        //    Task t = new Task(() => {
-        //        throw new DivideByZeroException();
-        //    });
+            // Assert.
+            Assert.False(result.Successful);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(2, result.RetryInfo.Executions);
+        }
 
-        //    // Act.
-        //    var result = Retrier.Init()
-        //                        .WithNumberOfRetries(1)
-        //                        .Invoke(async () => await t);
+        [Fact]
+        public void RetryAsyncFailFunctionWithSyncFallback()
+        {
+            // Arrange.
+            int expectedResult = 100;
 
-        //    // Assert.
-        //    Assert.False(result.Successful);
-        //    Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
-        //    Assert.Equal(2, result.RetryInfo.Executions); ;
-        //}
+            // Act.
+            var result = Retrier.Init()
+                                .WithNumberOfRetries(1)
+                                .InvokeAsync(FakeService.DivideByZeroExceptionAsync)
+                                .WaitForValue()
+                                .WithFallBack(() => expectedResult);
 
-        //[Fact]
-        //public void RetryAsyncFallback()
-        //{
-        //    // Arrange.
-        //    int zero = 0;
+            // Assert.
+            Assert.Equal(expectedResult, result.Result);
+            Assert.False(result.Successful);
+            Assert.True(result.ExecutedFallBack);
+            Assert.True(result.SuccessfulFallback);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(2, result.RetryInfo.Executions);
+        }
 
-        //    // Act.
-        //    var result = Retrier.Init()
-        //                        .WithNumberOfRetries(0)
-        //                        .WithMsWaitOf(0)
-        //                        .Invoke(() => 2 / zero)
-        //                        .WithFallBack(async () => await FakeService.GetIntAsync());
+        [Fact]
+        public void RetryAsyncFailFunctionWithSyncFallbackValue()
+        {
+            // Arrange.
+            int expectedResult = 100;
 
-        //    // Assert.
-        //    Assert.Equal(1, result.Result.Result);
-        //    Assert.Equal(2, result.RetryInfo.Executions);
-        //    Assert.False(result.Successful);
-        //}
+            // Act.
+            var result = Retrier.Init()
+                                .WithNumberOfRetries(1)
+                                .InvokeAsync(FakeService.DivideByZeroExceptionAsync)
+                                .WaitForValue()
+                                .WithFallBackValue(expectedResult);
+
+            // Assert.
+            Assert.Equal(expectedResult, result.Result);
+            Assert.False(result.Successful);
+            Assert.True(result.ExecutedFallBack);
+            Assert.True(result.SuccessfulFallback);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.Equal(2, result.RetryInfo.Executions);
+        }
+
+        [Fact]
+        public async void RetryAsyncFailFunctionWithAsyncFallback()
+        {
+            // Arrange & Act.
+            var result = await Retrier.Init()
+                                .WithNumberOfRetries(1)
+                                .InvokeAsync(FakeService.DivideByZeroExceptionAsync)
+                                .WaitForValue()
+                                .WithFallBackAsync(FakeService.ThrowOutOfMemoryAsync);
+
+            // Assert.
+            Assert.False(result.Successful);
+            Assert.False(result.SuccessfulFallback);
+            Assert.True(result.ExecutedFallBack);
+            Assert.Equal(3, result.RetryInfo.Executions);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+            Assert.IsType<OutOfMemoryException>(result.FallBackException);
+        }
+
+        [Fact]
+        public async void RetryAsyncFailAction()
+        {
+            // Arrange & Act.
+            var result = await Retrier.Init()
+                                .WithNumberOfRetries(1)
+                                .InvokeAsync(async () => await FakeService.DivideByZeroExceptionAsync());
+
+            // Assert.
+            Assert.False(result.Successful);
+            Assert.Equal(2, result.RetryInfo.Executions); ;
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+        }
+
+        [Fact]
+        public void RetryAsyncFallback()
+        {
+            // Arrange.
+            int zero = 0;
+
+            // Act.
+            var result = Retrier.Init()
+                                .WithNumberOfRetries(0)
+                                .WithMsWaitOf(0)
+                                .Invoke(() => 2 / zero)
+                                .WithFallBackAsync(async () => await FakeService.GetIntAsync())
+                                .WaitForValue();
+
+            // Assert.
+            Assert.Equal(1, result.Result);
+            Assert.Equal(2, result.RetryInfo.Executions);
+            Assert.False(result.Successful);
+        }
+
+        [Fact]
+        public void RetryAsyncFallbackThatFails()
+        {
+            // Arrange & Act.
+            var result = Retrier.Init()
+                                .WithNumberOfRetries(1)
+                                .WithMsWaitOf(0)
+                                .Invoke(() =>
+                                {
+                                    throw new OutOfMemoryException();
+                                    return 1; // Line to make the compiler happy
+                                })
+                                .WithFallBackAsync(async () => await FakeService.DivideByZeroExceptionAsync())
+                                .WaitForValue();
+
+            // Assert.
+            Assert.Equal(0, result.Result);
+            Assert.Equal(3, result.RetryInfo.Executions);
+            Assert.False(result.Successful);
+            Assert.IsType<DivideByZeroException>(result.FallBackException);
+            Assert.IsType<OutOfMemoryException>(result.RetryInfo.Exceptions.FirstOrDefault());
+        }
 
     }
 }

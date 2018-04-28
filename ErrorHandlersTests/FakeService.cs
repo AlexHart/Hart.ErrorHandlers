@@ -89,6 +89,24 @@ namespace ErrorHandlersTests
             return await Task.Run(() => 1);
         }
 
+        public static async Task<int> DivideByZeroExceptionAsync()
+        {
+            return await Task.Run(() =>
+            {
+                int zero = 0;
+                return 2 / zero;
+            });
+        }
+
+        public static async Task<int> ThrowOutOfMemoryAsync()
+        {
+            return await Task.Run(() =>
+            {
+                throw new OutOfMemoryException();
+                return 0;
+            });
+        }
+
         /// <summary>
         /// Method to fake an async call.
         /// </summary>
