@@ -57,7 +57,6 @@ namespace Hart.ErrorHandlers.Retry
     /// <summary>
     /// Holds the information of an Action Invoke inside Retrier.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public class RetryResult
     {
         /// <summary>

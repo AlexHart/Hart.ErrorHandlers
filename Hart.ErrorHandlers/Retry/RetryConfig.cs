@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hart.ErrorHandlers
+namespace Hart.ErrorHandlers.Retry
 {
     /// <summary>
     /// Retrier configuration.

@@ -7,8 +7,7 @@ namespace Hart.ErrorHandlers.Results
 {
     public static class ResultExtensions
     {
-
-        public static bool IsSuccess(this IResult result) => result is Success;
+        private static bool IsSuccess(this IResult result) => result is Success;
 
         public static bool IsError(this IResult result) => result is Error;
 
@@ -18,32 +17,32 @@ namespace Hart.ErrorHandlers.Results
         {
             if (result.IsSuccess())
                 return result as Success;
-            else
-                throw new ArgumentException($"Wrong type {nameof(result)}");
+            
+            throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
         public static Success<T> GetSuccess<T>(this IResult result)
         {
             if (result.IsSuccess())
                 return result as Success<T>;
-            else
-                throw new ArgumentException($"Wrong type {nameof(result)}");
+            
+            throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
         public static Error GetError(this IResult result)
         {
             if (result.IsError())
                 return result as Error;
-            else
-                throw new ArgumentException($"Wrong type {nameof(result)}");
+            
+            throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
         public static Error<T> GetError<T>(this IResult result) where T : Exception
         {
             if (result.IsError())
                 return result as Error<T>;
-            else
-                throw new ArgumentException($"Wrong type {nameof(result)}");
+
+            throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
         #endregion

@@ -2,23 +2,24 @@
 
 namespace Hart.ErrorHandlers.Results
 {
-
     /// <summary>
     /// Error with specific exception type.
     /// </summary>
     public class Error<TException> : Error, IResult<TException>
-            where TException : Exception
+        where TException : Exception
     {
-        public new TException Value { get; private set; }
+        public new TException Value { get; }
 
-        public new Type GetResultType() => typeof(TException);
+        public new Type GetResultType()
+        {
+            return typeof(TException);
+        }
 
         public Error(TException exception)
             : base(exception)
         {
-            this.Value = exception;
+            Value = exception;
         }
-
     }
 
     /// <summary>
@@ -26,17 +27,20 @@ namespace Hart.ErrorHandlers.Results
     /// </summary>
     public class Error : IResult
     {
-        public Exception Value { get; protected set; }
+        public Exception Value { get; }
 
         public bool IsOk => false;
 
         public bool IsVoid => false;
 
-        public Type GetResultType() => typeof(Exception);
+        public Type GetResultType()
+        {
+            return typeof(Exception);
+        }
 
         public Error(Exception exception)
         {
-            this.Value = exception;
+            Value = exception;
         }
 
     }

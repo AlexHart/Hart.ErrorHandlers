@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hart.ErrorHandlers
+namespace Hart.ErrorHandlers.Retry
 {
 
     /// <summary>
@@ -18,7 +18,7 @@ namespace Hart.ErrorHandlers
         /// <summary>
         /// List with all the exceptions throwed during executions.
         /// </summary>
-        public IList<Exception> Exceptions = new List<Exception>();
+        public readonly IList<Exception> Exceptions = new List<Exception>();
 
     }
 }

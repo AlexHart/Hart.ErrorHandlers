@@ -14,20 +14,12 @@ namespace Hart.ErrorHandlers.Retry
     public static class Retrier
     {
         /// <summary>
-        /// Initialize the retrier with the default configuration.
-        /// </summary>
-        /// <returns></returns>
-        public static RetryConfig Init() {
-            return Init(0, 3);
-        }
-
-        /// <summary>
         /// Initialize the retrier.
         /// </summary>
         /// <param name="msWait"></param>
         /// <param name="maxRetries"></param>
         /// <returns></returns>
-        public static RetryConfig Init(int msWait, int maxRetries) {
+        public static RetryConfig Init(int msWait = 0, int maxRetries = 3) {
             return new RetryConfig()
             {
                 MsWait = msWait,
@@ -38,8 +30,7 @@ namespace Hart.ErrorHandlers.Retry
         /// <summary>
         /// Initialize the retrier.
         /// </summary>
-        /// <param name="msWait"></param>
-        /// <param name="maxRetries"></param>
+        /// <param name="retryConfig"></param>
         public static RetryConfig Init(RetryConfig retryConfig) {           
             return retryConfig;
         }
@@ -51,13 +42,13 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="function"></param>
         /// <param name="config"></param>
         /// <returns></returns>
-        private static RetryResult<T> retryFunc<T>(Func<T> function, RetryConfig config)
+        private static RetryResult<T> RetryFunc<T>(Func<T> function, RetryConfig config)
         {
-			RetryInfo retryInfo = new RetryInfo();
-            RetryResult<T> result = new RetryResult<T>(default(T), retryInfo);
+			var retryInfo = new RetryInfo();
+            var result = new RetryResult<T>(default(T), retryInfo);
 
-            bool isOk = false;
-            int retriesRemaining = config.MaxRetries;
+            var isOk = false;
+            var retriesRemaining = config.MaxRetries;
 
             while (!isOk && (retriesRemaining >= 0 || config.RetryForever))
             {
@@ -90,13 +81,13 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="function"></param>
         /// <param name="config"></param>
         /// <returns></returns>
-        private static async Task<RetryResult<T>> retryFuncAsync<T>(Func<Task<T>> function, RetryConfig config)
+        private static async Task<RetryResult<T>> RetryFuncAsync<T>(Func<Task<T>> function, RetryConfig config)
         {
-            RetryInfo retryInfo = new RetryInfo();
-            RetryResult<T> result = new RetryResult<T>(default(T), retryInfo);
+            var retryInfo = new RetryInfo();
+            var result = new RetryResult<T>(default(T), retryInfo);
 
-            bool isOk = false;
-            int retriesRemaining = config.MaxRetries;
+            var isOk = false;
+            var retriesRemaining = config.MaxRetries;
 
             while (!isOk && (retriesRemaining >= 0 || config.RetryForever))
             {
@@ -128,13 +119,13 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="fun"></param>
         /// <param name="config"></param>
         /// <returns></returns>
-        private static RetryResult retryAction(Action fun, RetryConfig config)
+        private static RetryResult RetryAction(Action fun, RetryConfig config)
         {
-            RetryInfo retryInfo = new RetryInfo();
-            RetryResult result = new RetryResult(retryInfo);
+            var retryInfo = new RetryInfo();
+            var result = new RetryResult(retryInfo);
 
-            bool isOk = false;
-            int retriesRemaining = config.MaxRetries;
+            var isOk = false;
+            var retriesRemaining = config.MaxRetries;
 
             while (!isOk && (retriesRemaining >= 0 || config.RetryForever)) {
                 result.RetryInfo.Executions++;
@@ -171,7 +162,7 @@ namespace Hart.ErrorHandlers.Retry
             if (function == null)
                 throw new ArgumentNullException(nameof(function));
 
-            return retryFunc(function, config);
+            return RetryFunc(function, config);
         }
 
         /// <summary>
@@ -186,7 +177,7 @@ namespace Hart.ErrorHandlers.Retry
             if (function == null)
                 throw new ArgumentNullException(nameof(function));
 
-            return await retryFuncAsync(function, config);
+            return await RetryFuncAsync(function, config);
         }
 
         /// <summary>
@@ -200,7 +191,7 @@ namespace Hart.ErrorHandlers.Retry
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
-            return retryAction(action, config);
+            return RetryAction(action, config);
         }
 
     }

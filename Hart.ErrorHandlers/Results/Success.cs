@@ -2,7 +2,6 @@
 
 namespace Hart.ErrorHandlers.Results
 {
-
     /// <summary>
     /// Return type that shows that the function call was successful.
     /// </summary>
