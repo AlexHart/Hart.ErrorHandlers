@@ -13,10 +13,8 @@ namespace ErrorHandlersTests
         public void DivideByZeroHandled()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 0);
+            IResult result = FakeService.DoDivision(10, 0);
 
             // Assert.
             Assert.True(result is Error);
@@ -27,10 +25,8 @@ namespace ErrorHandlersTests
         public void DivideByZeroHandledWithSpecificException()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 0);
+            IResult result = FakeService.DoDivision(10, 0);
 
             // Assert.
             Assert.True(result is Error);
@@ -43,10 +39,8 @@ namespace ErrorHandlersTests
         public void DivideWithoutErrorHandled()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 2);
+            IResult result = FakeService.DoDivision(10, 2);
 
             // Assert.
             Assert.True(result is Success);
@@ -61,10 +55,8 @@ namespace ErrorHandlersTests
         public void ReturnBoolAsGenericTest()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.BooleanOperation(() => 1 == 1);
+            IResult result = FakeService.BooleanOperation(() => 1 == 1);
 
             // Assert.
             Assert.True(result is Success);
@@ -82,10 +74,8 @@ namespace ErrorHandlersTests
         public void CallToOkVoidMethod()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.FakeVoidMethod("Demo fake method");
+            IResult result = FakeService.FakeVoidMethod("Demo fake method");
 
             // Assert.
             Assert.True(result is Success);
@@ -100,10 +90,8 @@ namespace ErrorHandlersTests
         public void CallToWrongVoidMethod()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.FakeVoidMethod(string.Empty);
+            IResult result = FakeService.FakeVoidMethod(string.Empty);
 
             // Assert.
             Assert.False(result is Success);
@@ -115,10 +103,8 @@ namespace ErrorHandlersTests
         public void VoidMethodTypeIsNull()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.FakeVoidMethod("test");
+            IResult result = FakeService.FakeVoidMethod("test");
 
             // Assert.
             Assert.Null((result as Success).GetResultType());
@@ -128,10 +114,8 @@ namespace ErrorHandlersTests
         public void ExtractSuccess()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 2);
+            IResult result = FakeService.DoDivision(10, 2);
             Success successUntyped = result.GetSuccess();
 
             // Assert.
@@ -143,10 +127,8 @@ namespace ErrorHandlersTests
         public void ExtractSuccessTyped()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 2);
+            IResult result = FakeService.DoDivision(10, 2);
             Success<double> successTyped = result.GetSuccess<double>();
 
             // Assert.
@@ -159,10 +141,8 @@ namespace ErrorHandlersTests
         public void ExtractError()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 0);
+            IResult result = FakeService.DoDivision(10, 0);
             Error errorUntyped = result.GetError();
 
             // Assert.
@@ -174,10 +154,8 @@ namespace ErrorHandlersTests
         public void ExtractErrorTyped()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 0);
+            IResult result = FakeService.DoDivision(10, 0);
             var errorTyped = result.GetError<DivideByZeroException>();
 
             // Assert.
@@ -191,10 +169,8 @@ namespace ErrorHandlersTests
         public void ExtractSuccessSafely()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 2);
+            IResult result = FakeService.DoDivision(10, 2);
             (Success, Exception) tuple = result.GetSuccessSafe();
 
             Success success = tuple.GetValue();
@@ -211,10 +187,8 @@ namespace ErrorHandlersTests
         public void ExtractSuccessTypedSafely()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 2);
+            IResult result = FakeService.DoDivision(10, 2);
             (Success<double>, Exception) tuple = result.GetSuccessSafe<double>();
 
             var success = tuple.GetValue();
@@ -232,10 +206,8 @@ namespace ErrorHandlersTests
         public void ExtractErrorSafely()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 0);
+            IResult result = FakeService.DoDivision(10, 0);
             (Error, Exception) tuple = result.GetErrorSafe();
 
             Error error = tuple.GetValue();
@@ -252,10 +224,8 @@ namespace ErrorHandlersTests
         public void ExtractErrorTypedSafely()
         {
             // Arrange.
-            var calculator = new Calculator();
-
             // Act.
-            IResult result = calculator.DoDivision(10, 0);
+            IResult result = FakeService.DoDivision(10, 0);
             (Error<DivideByZeroException>, Exception) errorTuple = result.GetErrorSafe<DivideByZeroException>();
 
             Error<DivideByZeroException> error = errorTuple.GetValue();

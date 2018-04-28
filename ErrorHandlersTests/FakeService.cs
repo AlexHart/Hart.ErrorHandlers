@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Hart.ErrorHandlers;
 using Hart.ErrorHandlers.Results;
 
@@ -10,10 +12,10 @@ namespace ErrorHandlersTests
     /// <summary>
     /// Class for testing.
     /// </summary>
-    public class Calculator
+    public class FakeService
     {
 
-        public IResult DoDivision(int x, int y)
+        public static IResult DoDivision(int x, int y)
         {
             IResult result;
             try
@@ -31,7 +33,7 @@ namespace ErrorHandlersTests
             return result;
         }
 
-        public IResult BooleanOperation(Func<bool> fun)
+        public static IResult BooleanOperation(Func<bool> fun)
         {
             IResult result;
             try
@@ -50,7 +52,7 @@ namespace ErrorHandlersTests
         /// Method that returns IResult with success or error, substitutes a void in C# or sub call in VB.net
         /// </summary>
         /// <returns></returns>
-        public IResult FakeVoidMethod(string message)
+        public static IResult FakeVoidMethod(string message)
         {
             IResult result;
 
@@ -69,5 +71,31 @@ namespace ErrorHandlersTests
             return result;
         }
 
+        /// <summary>
+        /// Method to fake an async call.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<string> GetHelloWorldAsync()
+        {
+            return await Task.Run(() => "Hello world");
+        }
+
+        /// <summary>
+        /// Method to fake an async call.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<int> GetIntAsync()
+        {
+            return await Task.Run(() => 1);
+        }
+
+        /// <summary>
+        /// Method to fake an async call.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task DoFakeCalculationsAsync()
+        {
+            await Task.Run(() => Thread.Sleep(10));
+        }
     }
 }
