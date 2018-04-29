@@ -7,8 +7,8 @@ This project purpose is to provide helpers for error handling in .NET Standard. 
 ## Language
 This is a C# .Net Standard 2.0 library. 
 
-## Where
-You can download the latest version from nuget.org. Directly in VS you can search for `Hart.ErrorHandlers`.
+## Where to get it
+You can download the latest version from nuget.org or also from the nuget package manager in VS you can search for `Hart.ErrorHandlers`.
 
 ## Safe Result returns
 IResult is the interface that any type built to wrap function call results should implement. It's main purpose is to allow the needed covariance to return multiple types from the same function but "*packed*" under the same umbrella. IT also provides some methods to check if the call is Ok or if it returned any value.
