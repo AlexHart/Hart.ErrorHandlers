@@ -5,7 +5,10 @@
 This project purpose is to provide helpers for error handling in .NET Standard. Basically anything involving wrapping exceptions, method calls, retrying, etc.
 
 ## Language
-This is a C# .Net Standard 2.0 library.
+This is a C# .Net Standard 2.0 library. 
+
+## Where
+You can download the latest version from nuget.org. Directly in VS you can search for `Hart.ErrorHandlers`.
 
 ## Safe Result returns
 IResult is the interface that any type built to wrap function call results should implement. It's main purpose is to allow the needed covariance to return multiple types from the same function but "*packed*" under the same umbrella. IT also provides some methods to check if the call is Ok or if it returned any value.
@@ -97,7 +100,7 @@ Funcs and Actions.
 ``` CSharp
 
 // You can use the .WaitForValue to keep chaining methods.
-// (this way the method that contains this Retry doesn't to be marked async)
+// (this way the method that contains this Retry doesn't need to be marked async)
 public int GetValue() {
     var result = Retrier.Init()
         .WithNumberOfRetries(1)
@@ -136,6 +139,7 @@ before using the returned value**. For example, a function that returns `int` th
 var res = Retrier.Init()
                  .Invoke(() => 2 + 2);
 
+// Check if the function was successful.
 if (res.Successful)
 {
     Console.WriteLine(res.Result); // 4  
