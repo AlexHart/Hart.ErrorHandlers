@@ -60,7 +60,7 @@ public IResult DoDivision(int x, int y)
 
 ## Retrying
 
-In the namespace Hart.ErrorHandlers.Retry you will find and static class `Retry`
+In the namespace Hart.ErrorHandlers.Retry you will find and static class `Retrier`
 used to configure and retry functions or actions in a safe way. 
 There are options to configure the number of retries, the ms wait between retries 
 or even if the retrier will keep retrying until successful.
