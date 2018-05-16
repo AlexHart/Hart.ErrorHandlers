@@ -13,16 +13,20 @@ namespace Hart.ErrorHandlers.Retry
     /// </summary>
     public static class Retrier
     {
+        public static RetryConfig Init(int maxRetries = 3) {
+            return Init(TimeSpan.Zero, maxRetries);
+        }
+        
         /// <summary>
         /// Initialize the retrier.
         /// </summary>
-        /// <param name="msWait"></param>
+        /// <param name="wait"></param>
         /// <param name="maxRetries"></param>
         /// <returns></returns>
-        public static RetryConfig Init(int msWait = 0, int maxRetries = 3) {
+        public static RetryConfig Init(TimeSpan wait, int maxRetries = 3) {
             return new RetryConfig()
             {
-                MsWait = msWait,
+                WaitBetweenRetries = wait,
                 MaxRetries = maxRetries
             };
         }
@@ -47,10 +51,13 @@ namespace Hart.ErrorHandlers.Retry
 			var retryInfo = new RetryInfo();
             var result = new RetryResult<T>(default(T), retryInfo);
 
-            var isOk = false;
-            var retriesRemaining = config.MaxRetries;
+			var isOk = false;
+			var retriesRemaining = config.MaxRetries;
+			var timeoutAt = DateTime.Now.Add(config.TotalTimeout);
+            bool hasTimeout = config.HasTimeout;
 
-            while (!isOk && (retriesRemaining >= 0 || config.RetryForever))
+            while (!isOk && (retriesRemaining >= 0 || config.RetryForever)
+                   && (!hasTimeout || (config.HasTimeout && DateTime.Now < timeoutAt)))
             {
                 result.RetryInfo.Executions++;
 
@@ -64,8 +71,8 @@ namespace Hart.ErrorHandlers.Retry
                     result.RetryInfo.Exceptions.Add(ex);
 
                     // Wait before retrying.
-                    if (config.MsWait > 0)
-                        Thread.Sleep(config.MsWait);
+                    if (config.WaitBetweenRetries > TimeSpan.Zero)
+                        Thread.Sleep(config.WaitBetweenRetries);
                 }
 				
                 retriesRemaining--;
@@ -88,9 +95,12 @@ namespace Hart.ErrorHandlers.Retry
 
             var isOk = false;
             var retriesRemaining = config.MaxRetries;
+            var timeoutAt = DateTime.Now.Add(config.TotalTimeout);
+            bool hasTimeout = config.HasTimeout;
 
-            while (!isOk && (retriesRemaining >= 0 || config.RetryForever))
-            {
+            while (!isOk && (retriesRemaining >= 0 || config.RetryForever)
+                   && (!hasTimeout || (config.HasTimeout && DateTime.Now < timeoutAt)))
+            {   
                 result.RetryInfo.Executions++;
 
                 try
@@ -103,8 +113,8 @@ namespace Hart.ErrorHandlers.Retry
                     result.RetryInfo.Exceptions.Add(ex);
 
                     // Wait before retrying.
-                    if (config.MsWait > 0)
-                        Thread.Sleep(config.MsWait);
+                    if (config.WaitBetweenRetries > TimeSpan.Zero)
+                        Thread.Sleep(config.WaitBetweenRetries);
                 }
 
                 retriesRemaining--;
@@ -126,8 +136,12 @@ namespace Hart.ErrorHandlers.Retry
 
             var isOk = false;
             var retriesRemaining = config.MaxRetries;
+            var timeoutAt = DateTime.Now.Add(config.TotalTimeout);
+            bool hasTimeout = config.HasTimeout;
 
-            while (!isOk && (retriesRemaining >= 0 || config.RetryForever)) {
+            while (!isOk && (retriesRemaining >= 0 || config.RetryForever)
+                   && (!hasTimeout || (config.HasTimeout && DateTime.Now < timeoutAt)))
+            {
                 result.RetryInfo.Executions++;
 
                 try
@@ -140,8 +154,8 @@ namespace Hart.ErrorHandlers.Retry
                     result.RetryInfo.Exceptions.Add(ex);
 
                     // Wait before retrying.
-                    if (config.MsWait > 0)
-                        Thread.Sleep(config.MsWait);
+                    if (config.WaitBetweenRetries > TimeSpan.Zero)
+                        Thread.Sleep(config.WaitBetweenRetries);
                 }
 
                 retriesRemaining--;

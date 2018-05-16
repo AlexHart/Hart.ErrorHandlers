@@ -9,9 +9,9 @@ namespace Hart.ErrorHandlers.Retry
     {
 
         /// <summary>
-        /// Miliseconds to wait between requests.
+        /// Time to wait between retries.
         /// </summary>
-        public int MsWait { get; set; } = 0;
+        public TimeSpan WaitBetweenRetries { get; set; } = TimeSpan.Zero;
 
         /// <summary>
         /// Maximum number of times to retry a failing function.
@@ -24,5 +24,10 @@ namespace Hart.ErrorHandlers.Retry
         /// </summary>
         /// <value><c>true</c> if retry forever; otherwise, <c>false</c>.</value>
         public bool RetryForever { get; set; } = false;
+
+        public TimeSpan TotalTimeout { get; set; } = TimeSpan.Zero;
+
+        public bool HasTimeout => TotalTimeout > TimeSpan.Zero && TotalTimeout > TimeSpan.MinValue;
+
     }
 }

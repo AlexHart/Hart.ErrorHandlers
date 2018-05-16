@@ -20,7 +20,7 @@ namespace ErrorHandlersTests
             var config = new RetryConfig()
             {
                 MaxRetries = 10,
-                MsWait = 1000,
+                WaitBetweenRetries = TimeSpan.FromSeconds(1),
                 RetryForever = false
             };
 
@@ -74,7 +74,7 @@ namespace ErrorHandlersTests
             var config = Retrier.Init();
 
             // Assert.
-            Assert.Equal(0, config.MsWait);
+            Assert.Equal(0, config.WaitBetweenRetries.Milliseconds);
             Assert.Equal(3, config.MaxRetries);
         }
 
@@ -82,10 +82,10 @@ namespace ErrorHandlersTests
         public void InitRetryConfig()
         {
             // Arrange && Act.
-            var config = Retrier.Init(200, 10);
+            var config = Retrier.Init(TimeSpan.FromMilliseconds(200), 10);
 
             // Assert.
-            Assert.Equal(200, config.MsWait);
+            Assert.Equal(200, config.WaitBetweenRetries.Milliseconds);
             Assert.Equal(10, config.MaxRetries);
         }
 
@@ -99,7 +99,7 @@ namespace ErrorHandlersTests
 
             // Assert.
             Assert.Equal(10, config.MaxRetries);
-            Assert.Equal(1000, config.MsWait);
+            Assert.Equal(1, config.WaitBetweenRetries.Seconds);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace ErrorHandlersTests
             var retryConfig = new RetryConfig()
             {
                 MaxRetries = 10,
-                MsWait = 1000
+                WaitBetweenRetries = TimeSpan.FromSeconds(1)
             };
 
             // Act.
@@ -117,7 +117,7 @@ namespace ErrorHandlersTests
 
             // Assert.
             Assert.Equal(10, config.MaxRetries);
-            Assert.Equal(1000, config.MsWait);
+            Assert.Equal(1, config.WaitBetweenRetries.Seconds);
         }
 
         [Fact]
@@ -587,5 +587,38 @@ namespace ErrorHandlersTests
             Assert.IsType<OutOfMemoryException>(result.RetryInfo.Exceptions.FirstOrDefault());
         }
 
+        [Fact]
+        public void ExpireAfterTotalTimeoutWithNumberOfRetries()
+        {
+            // Arrange & Act.
+            int zero = 0;
+            RetryResult<int> result = Retrier.Init()
+                                                .WithWaitOf(TimeSpan.FromMilliseconds(500))
+                                                .WithNumberOfRetries(200)
+                                                .TimeoutAfter(TimeSpan.FromSeconds(1))
+                                                .Invoke(() => 2 / zero);
+            // Assert.
+            Assert.Equal(0, result.Result);
+            Assert.False(result.Successful);
+            Assert.Equal(2, result.RetryInfo.Executions);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+        }
+
+        [Fact]
+        public void ExpireAfterTotalTimeoutWithRetryForever()
+        {
+            // Arrange & Act.
+            int zero = 0;
+            RetryResult<int> result = Retrier.Init()
+                                                .WithWaitOf(TimeSpan.FromMilliseconds(500))
+                                                .RetryUntilSuccessful()
+                                                .TimeoutAfter(TimeSpan.FromSeconds(1))
+                                                .Invoke(() => 2 / zero);
+            // Assert.
+            Assert.Equal(0, result.Result);
+            Assert.False(result.Successful);
+            Assert.Equal(2, result.RetryInfo.Executions);
+            Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
+        }
     }
 }

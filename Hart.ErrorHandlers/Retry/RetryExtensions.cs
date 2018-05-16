@@ -14,7 +14,13 @@ namespace Hart.ErrorHandlers.Retry
 
         public static RetryConfig WithMsWaitOf(this RetryConfig retryConfig, int msWait)
         {
-            retryConfig.MsWait = msWait;
+            retryConfig.WaitBetweenRetries = TimeSpan.FromMilliseconds(msWait);
+            return retryConfig;
+        }
+
+        public static RetryConfig WithWaitOf(this RetryConfig retryConfig, TimeSpan wait)
+        {
+            retryConfig.WaitBetweenRetries = wait;
             return retryConfig;
         }
 
@@ -26,6 +32,17 @@ namespace Hart.ErrorHandlers.Retry
 
         public static RetryConfig RetryUntilSuccessful(this RetryConfig retryConfig) {
             retryConfig.RetryForever = true;
+            return retryConfig;
+        }
+
+        /// <summary>
+        /// Configure a maximum retry time.
+        /// </summary>
+        /// <returns>The after.</returns>
+        /// <param name="retryConfig">Retry config.</param>
+        /// <param name="timeout">Timeout.</param>
+        public static RetryConfig TimeoutAfter(this RetryConfig retryConfig, TimeSpan timeout) {
+            retryConfig.TotalTimeout = timeout;
             return retryConfig;
         }
 
