@@ -13,7 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Fallback\" />
+    <Compile Remove="Fallback\**" />
+    <EmbeddedResource Remove="Fallback\**" />
+    <None Remove="Fallback\**" />
   </ItemGroup>
 
 </Project>
