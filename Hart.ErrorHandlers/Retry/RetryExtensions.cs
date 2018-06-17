@@ -84,7 +84,7 @@ namespace Hart.ErrorHandlers.Retry
                 try
                 {
                     result.ExecutedFallBack = true;
-                    result.Result = fallback.Invoke();
+                    result.Result = fallback();
                 }
                 catch (Exception ex)
                 {
@@ -114,7 +114,7 @@ namespace Hart.ErrorHandlers.Retry
                     result.ExecutedFallBack = true;
                     result.RetryInfo.Executions++;
 
-                    result.Result = await fallback.Invoke();
+                    result.Result = await fallback();
                 }
                 catch (Exception ex)
                 {
@@ -180,7 +180,7 @@ namespace Hart.ErrorHandlers.Retry
                 try
                 {
                     result.ExecutedFallBack = true;
-                    fallback.Invoke();
+                    fallback();
                 }
                 catch (Exception ex)
                 {

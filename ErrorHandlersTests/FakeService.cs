@@ -38,7 +38,7 @@ namespace ErrorHandlersTests
             IResult result;
             try
             {
-                var boolRes = fun.Invoke();
+                var boolRes = fun();
                 result = new Success<bool>(boolRes);
 	        }
             catch (Exception ex)

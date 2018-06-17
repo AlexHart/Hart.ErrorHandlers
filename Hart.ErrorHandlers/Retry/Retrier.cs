@@ -63,7 +63,7 @@ namespace Hart.ErrorHandlers.Retry
 
                 try
                 {
-                    result.Result = function.Invoke();
+                    result.Result = function();
                     isOk = true;
                 }
                 catch (Exception ex)
@@ -105,7 +105,7 @@ namespace Hart.ErrorHandlers.Retry
 
                 try
                 {
-                    result.Result = await function.Invoke();
+                    result.Result = await function();
                     isOk = true;
                 }
                 catch (Exception ex)
@@ -146,7 +146,7 @@ namespace Hart.ErrorHandlers.Retry
 
                 try
                 {
-                    fun.Invoke();
+                    fun();
                     isOk = true;
                 }
                 catch (Exception ex)
