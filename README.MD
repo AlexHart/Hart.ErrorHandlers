@@ -35,7 +35,7 @@ if (result is Success && result is Success<double>) {
 **Implementation in method:**
 ``` CSharp
 // Doing division could throw a divide by zero exception.
-public IResult DoDivision(int x, int y)
+public IResult<double> DoDivision(int x, int y)
 {
     IResult result;
     try
@@ -44,11 +44,11 @@ public IResult DoDivision(int x, int y)
     }
     catch(DivideByZeroException ex)
     {
-        result = new Error<DivideByZeroException>(ex);
+        result = new Error<double>(ex);
     }
     catch (Exception ex)
     {
-        result = new Error(ex);
+        result = new Error<double>(ex);
     }
     return result;
 }

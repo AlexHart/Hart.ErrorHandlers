@@ -26,11 +26,11 @@ namespace ErrorHandlersTests
         {
             // Arrange.
             // Act.
-            IResult result = FakeService.DoDivision(10, 0);
+            IResult<double> result = FakeService.DoDivision(10, 0);
 
             // Assert.
             Assert.True(result is Error);
-            Assert.True(result is Error<DivideByZeroException>);
+            Assert.True(result is Error<double>);
             Assert.True(result.IsError());
             Assert.Equal(typeof(DivideByZeroException), result.GetResultType());
         }
@@ -142,12 +142,14 @@ namespace ErrorHandlersTests
         {
             // Arrange.
             // Act.
-            IResult result = FakeService.DoDivision(10, 0);
+            IResult<double> result = FakeService.DoDivision(10, 0);
             Error errorUntyped = result.GetError();
+            Type exceptionType = errorUntyped.GetResultType();
 
             // Assert.
             Assert.True(errorUntyped is Error);
-            Assert.True(errorUntyped is Error<DivideByZeroException>);
+            Assert.True(errorUntyped is Error<double>);
+            Assert.Equal(typeof(DivideByZeroException), exceptionType);
         }
 
         [Fact]
@@ -156,11 +158,12 @@ namespace ErrorHandlersTests
             // Arrange.
             // Act.
             IResult result = FakeService.DoDivision(10, 0);
-            var errorTyped = result.GetError<DivideByZeroException>();
+            var errorTyped = result.GetError<double>();
+            Type exceptionType = errorTyped.GetResultType();
 
             // Assert.
             Assert.True(errorTyped is Error);
-            Assert.True(errorTyped is Error<DivideByZeroException>);
+            Assert.Equal(typeof(DivideByZeroException), exceptionType);
             Assert.False(errorTyped.IsOk);
             Assert.False(errorTyped.IsVoid);
         }
@@ -225,14 +228,15 @@ namespace ErrorHandlersTests
         {
             // Arrange.
             // Act.
-            IResult result = FakeService.DoDivision(10, 0);
-            (Error<DivideByZeroException>, Exception) errorTuple = result.GetErrorSafe<DivideByZeroException>();
+            var result = FakeService.DoDivision(10, 0);
+            (Error<double>, Exception) errorTuple = result.GetErrorSafe<double>();
 
-            Error<DivideByZeroException> error = errorTuple.GetValue();
+            var error = errorTuple.GetValue();
 
             // Assert.
-            Assert.True(error is Error<DivideByZeroException>);
-            Assert.Equal(typeof(DivideByZeroException), error.Value.GetType());
+            Assert.True(error is Error<double>);
+            Assert.Equal(typeof(DivideByZeroException), error.GetResultType());
+            Assert.Equal(typeof(double), error.Value.GetType());
         }
     }
 }

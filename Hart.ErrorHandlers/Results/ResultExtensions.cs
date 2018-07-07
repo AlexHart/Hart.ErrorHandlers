@@ -37,7 +37,7 @@ namespace Hart.ErrorHandlers.Results
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
-        public static Error<T> GetError<T>(this IResult result) where T : Exception
+        public static Error<T> GetError<T>(this IResult result)
         {
             if (result.IsError())
                 return result as Error<T>;
@@ -85,7 +85,7 @@ namespace Hart.ErrorHandlers.Results
             }
         }
 
-        public static (Error<T> Error, Exception Exception) GetErrorSafe<T>(this IResult result) where T : Exception
+        public static (Error<T> Error, Exception Exception) GetErrorSafe<T>(this IResult result)
         {
             try
             {
@@ -184,7 +184,7 @@ namespace Hart.ErrorHandlers.Results
         /// <typeparam name="T"></typeparam>
         /// <param name="tuple"></param>
         /// <returns></returns>
-        public static Error<T> GetValue<T>(this (Error<T>, Exception) tuple) where T : Exception
+        public static Error<T> GetValue<T>(this (Error<T>, Exception) tuple)
         {
             return tuple.Item1;
         }

@@ -15,20 +15,20 @@ namespace ErrorHandlersTests
     public class FakeService
     {
 
-        public static IResult DoDivision(int x, int y)
+        public static IResult<double> DoDivision(int x, int y)
         {
-            IResult result;
+            IResult<double> result;
             try
             {
                 result = new Success<double>(x / y);
             }
             catch(DivideByZeroException ex)
             {
-                result = new Error<DivideByZeroException>(ex);
+                result = new Error<double>(ex);
             }
             catch (Exception ex)
             {
-                result = new Error(ex);
+                result = new Error<double>(ex);
             }
             return result;
         }
