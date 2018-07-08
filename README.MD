@@ -17,11 +17,11 @@ IResult is the interface that any type built to wrap function call results shoul
 ``` CSharp
 var calculator = new Calculator();
 // Divide by zero exception.
-IResult result = calculator.DoDivision(10, 0);
+IResult<double> result = calculator.DoDivision(10, 0);
 
 // The user has to check the type before accessing to the value.
 if (result is Error) {
-    var exception = (result as Error).Exception;
+    var exception = (result as Error).ExceptionValue;
     Console.WriteLine(exception);
 } 
 
@@ -37,7 +37,7 @@ if (result is Success && result is Success<double>) {
 // Doing division could throw a divide by zero exception.
 public IResult<double> DoDivision(int x, int y)
 {
-    IResult result;
+    IResult<double> result;
     try
     {
         result = new Success<double>(x / y);
