@@ -5,10 +5,10 @@
 This project purpose is to provide helpers for error handling in .NET Standard. Basically anything involving wrapping exceptions, method calls, retrying, etc.
 
 ## Language
-This is a C# .Net Standard 2.0 library. 
+This is a C# [.Net Standard](https://docs.microsoft.com/es-es/dotnet/standard/net-standard) 2.0 library. 
 
 ## Where to get it
-You can download the latest version from nuget.org or also from the nuget package manager in VS you can search for `Hart.ErrorHandlers`.
+You can download the latest version from [nuget.org](https://www.nuget.org/packages/Hart.ErrorHandlers/) or also from the nuget package manager in VS by searching for `Hart.ErrorHandlers`.
 
 ## Safe Result returns
 IResult is the interface that any type built to wrap function call results should implement. It's main purpose is to allow the needed covariance to return multiple types from the same function but "*packed*" under the same umbrella. IT also provides some methods to check if the call is Ok or if it returned any value.
@@ -17,11 +17,11 @@ IResult is the interface that any type built to wrap function call results shoul
 ``` CSharp
 var calculator = new Calculator();
 // Divide by zero exception.
-IResult result = calculator.DoDivision(10, 0);
+IResult<double> result = calculator.DoDivision(10, 0);
 
 // The user has to check the type before accessing to the value.
 if (result is Error) {
-    var exception = (result as Error).Exception;
+    var exception = (result as Error).ExceptionValue;
     Console.WriteLine(exception);
 } 
 
@@ -37,7 +37,7 @@ if (result is Success && result is Success<double>) {
 // Doing division could throw a divide by zero exception.
 public IResult<double> DoDivision(int x, int y)
 {
-    IResult result;
+    IResult<double> result;
     try
     {
         result = new Success<double>(x / y);
