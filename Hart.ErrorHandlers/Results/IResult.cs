@@ -36,7 +36,6 @@ namespace Hart.ErrorHandlers.Results
     /// <typeparam name="T"></typeparam>
     public interface IResult<T> : IResult
     {
-        T Value { get; }
     }
 
 }

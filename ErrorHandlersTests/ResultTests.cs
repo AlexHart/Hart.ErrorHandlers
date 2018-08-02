@@ -4,7 +4,7 @@ using Xunit;
 using System.Linq;
 using Hart.ErrorHandlers.Results;
 
-namespace ErrorHandlersTests
+namespace ErrorHandlersTests.Results
 {
 
     public class ResultTests
@@ -237,6 +237,33 @@ namespace ErrorHandlersTests
             Assert.True(error is Error<double>);
             Assert.Equal(typeof(DivideByZeroException), error.GetResultType());
             Assert.Equal(typeof(double), error.Value.GetType());
+        }
+
+        [Fact]
+        public void DontAllowExtractingValueFromResultOnlySuccess()
+        {
+            // Arrange.
+            IResult<double> result = FakeService.DoDivision(10, 2);
+
+            // Act.
+            var success = result.GetSuccess<double>();
+            var value = success.Value;
+
+            // Assert.
+            Assert.Equal(5.0, value);
+        }
+
+        [Fact]
+        public void DontAllowExtractingValueSafelyFromResultOnlySuccess()
+        {
+            // Arrange.
+            IResult<double> operationResult = FakeService.DoDivision(10, 2);
+
+            // Act.
+            Success<double> success = operationResult.GetSuccessSafe<double>().Value;
+
+            // Assert.
+            Assert.Equal(5.0, success.Value);
         }
     }
 }
