@@ -365,5 +365,19 @@ namespace ErrorHandlersTests.Results
             // Assert.
             Assert.Equal(5.0, divResult);
         }
+
+        [Fact]
+        public void TestImplicitOperatorInSuccessSafe()
+        {
+            // Arrange.
+            IResult<double> result = FakeService.DoDivision(10, 2);
+
+            // Act.
+            var divResult = result.GetSuccessSafe<double>();
+
+            // Assert.
+            Assert.Equal(5.0, divResult.Value);
+        }
+
     }
 }
