@@ -102,8 +102,7 @@ namespace ErrorHandlersTests
         {
             return await Task.Run(() =>
             {
-                throw new OutOfMemoryException();
-                return 0;
+                return OutOfMemory();
             });
         }
 
@@ -114,6 +113,15 @@ namespace ErrorHandlersTests
         public static async Task DoFakeCalculationsAsync()
         {
             await Task.Run(() => Thread.Sleep(10));
+        }
+
+        /// <summary>
+        /// Function that throws an OutOfMemoryException instead of returning the expected int.
+        /// </summary>
+        /// <returns></returns>
+        public static int OutOfMemory()
+        {
+            throw new OutOfMemoryException();
         }
     }
 }

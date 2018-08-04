@@ -13,6 +13,11 @@ namespace Hart.ErrorHandlers.Results
 
         #region Unsafe value extractors
 
+        /// <summary>
+        /// Get the Success out of an IResult. It will throw an exception if it's not a Success.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public static Success GetSuccess(this IResult result)
         {
             if (result.IsSuccess())
@@ -21,11 +26,29 @@ namespace Hart.ErrorHandlers.Results
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
+        /// <summary>
+        /// Get the Success out of an IResult. It will throw an exception if it's not a Success.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public static Success<T> GetSuccess<T>(this IResult result)
         {
             if (result.IsSuccess())
                 return result as Success<T>;
             
+            throw new ArgumentException($"Wrong type {nameof(result)}");
+        }
+
+        /// <summary>
+        /// Get the Success out of an IResult. It will throw an exception if it's not a Success.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static Success<T> GetSuccess<T>(this IResult<T> result)
+        {
+            if (result.IsSuccess())
+                return result as Success<T>;
+
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 

@@ -18,6 +18,16 @@ namespace Hart.ErrorHandlers.Results
         {
             this.Value = value;
         }
+
+        /// <summary>
+        /// Get directly the value of the success via an implicit operator.
+        /// </summary>
+        /// <param name="success">Success that holds the value</param>
+        public static implicit operator T(Success<T> success)
+        {
+            return success.Value;
+        }
+
     }
 
     /// <summary>

@@ -234,8 +234,7 @@ namespace ErrorHandlersTests.Retry
                                 .WithMsWaitOf(0)
                                 .Invoke(() =>
                                 {
-                                    throw new OutOfMemoryException();
-                                    return 1; // Line to make the compiler happy
+                                    return FakeService.OutOfMemory();
                                 })
                                 .WithFallBackAsync(async () => await FakeService.DivideByZeroExceptionAsync())
                                 .WaitForValue();

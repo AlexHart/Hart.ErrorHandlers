@@ -265,5 +265,31 @@ namespace ErrorHandlersTests.Results
             // Assert.
             Assert.Equal(5.0, success.Value);
         }
+
+        [Fact]
+        public void TestImplicitOperatorInSuccessOfT()
+        {
+            // Arrange.
+            IResult<double> result = FakeService.DoDivision(10, 2);
+
+            // Act.
+            Success<double> divResult = result.GetSuccess();
+
+            // Assert.
+            Assert.Equal(5.0, divResult);
+        }
+
+        [Fact]
+        public void TestImplicitOperatorInSuccessOfTDirectlyToT()
+        {
+            // Arrange.
+            IResult<double> result = FakeService.DoDivision(10, 2);
+
+            // Act.
+            double divResult = result.GetSuccess();
+
+            // Assert.
+            Assert.Equal(5.0, divResult);
+        }
     }
 }
