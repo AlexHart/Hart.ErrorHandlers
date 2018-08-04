@@ -267,6 +267,80 @@ namespace ErrorHandlersTests.Results
         }
 
         [Fact]
+        public void BindMultipleResultsTogetherOk()
+        {
+            var res = FakeService.DoDivision(10, 2)
+                .Bind(() => FakeService.DoDivision(20, 2))
+                .Bind(() => FakeService.DoDivision(4, 2));
+
+            Assert.True(res.IsOk);
+        }
+
+        [Fact]
+        public void BindMultipleResultsTogetherError()
+        {
+            var res = FakeService.DoDivision(10, 2)
+                .Bind(() => FakeService.DoDivision(20, 0))
+                .Bind(() => FakeService.DoDivision(4, 2));
+
+            Assert.False(res.IsOk);
+        }
+
+        [Fact]
+        public void BindMultipleResultsWithValueTogetherOk()
+        {
+            var res = FakeService.DoDivision(200, 2)
+                .Bind((x) => FakeService.DoDivision(x, 2))
+                .Bind((x) => FakeService.DoDivision(x, 2));
+
+            Assert.True(res.IsOk);
+            Assert.Equal(25.0, res.GetSuccess<double>().Value);
+        }
+
+        [Fact]
+        public void BindMultipleResultsWithValueTogetherError()
+        {
+            var res = FakeService.DoDivision(100, 2)
+                .Bind((x) => FakeService.DoDivision((int)x, 0))
+                .Bind((x) => FakeService.DoDivision((int)x, 2));
+
+            Assert.False(res.IsOk);
+            Assert.IsType<DivideByZeroException>(res.GetError<double>().ExceptionValue);
+        }
+
+        [Fact]
+        public void BindDifferentTypesTogether()
+        {
+            var res = FakeService.DoDivision(100, 2)
+                .Bind((x) => FakeService.DoStringStuff(x.ToString()));
+
+            Assert.True(res.IsOk);
+            Assert.Equal("*** 50 ***", res.GetSuccess<string>().Value);
+        }
+
+        [Fact]
+        public void BindDifferentTypesTogetherIgnoringPreviousResult()
+        {
+            //This should never be done, but for the shake of it...
+            var res = FakeService.DoDivision(100, 2)
+                .Bind((x) => FakeService.DoStringStuff(x.ToString()))
+                .Bind((s) => FakeService.DoDivision(10, 2));
+
+            Assert.True(res.IsOk);
+            Assert.Equal(5.0, res.GetSuccess<double>().Value);
+        }
+
+        [Fact]
+        public void BindDifferentTypesTogetherWithOnesThatOnlyReturnResult()
+        {
+            IResult res = FakeService.DoDivision(100, 2)
+                .Bind((x) => FakeService.DoStringStuff(x.ToString()))
+                .Bind((x) => FakeService.FakeVoidMethod(x));
+
+            Assert.True(res.IsOk);
+        }
+
+        [Fact]
         public void TestImplicitOperatorInSuccessOfT()
         {
             // Arrange.

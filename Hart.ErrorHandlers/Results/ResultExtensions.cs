@@ -22,7 +22,7 @@ namespace Hart.ErrorHandlers.Results
         {
             if (result.IsSuccess())
                 return result as Success;
-            
+
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
@@ -35,7 +35,7 @@ namespace Hart.ErrorHandlers.Results
         {
             if (result.IsSuccess())
                 return result as Success<T>;
-            
+
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
@@ -50,7 +50,7 @@ namespace Hart.ErrorHandlers.Results
         {
             if (result.IsError())
                 return result as Error;
-            
+
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
@@ -218,6 +218,65 @@ namespace Hart.ErrorHandlers.Results
         public static Error<T> GetValue<T>(this (Error<T>, Exception) tuple)
         {
             return tuple.Item1;
+        }
+
+        #endregion
+
+        #region Binding
+
+        /// <summary>
+        /// Chain two IResults
+        /// </summary>
+        /// <returns>The bind.</returns>
+        /// <param name="resultPrevious">Result previous.</param>
+        /// <param name="resultNext">Result next.</param>
+        public static IResult Bind(this IResult resultPrevious, Func<IResult> resultNext)
+        {
+            if (resultPrevious.IsOk)
+            {
+                return resultNext();
+            }
+            else
+            {
+                return resultPrevious.GetError();
+            }
+        }
+
+        /// <summary>
+        /// Chain two IResults that receive and return values.
+        /// </summary>
+        /// <returns>The bind.</returns>
+        /// <param name="resultPrevious">Result previous.</param>
+        /// <param name="resultNext">Result next.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        /// <typeparam name="Y">The 2nd type parameter.</typeparam>
+        public static IResult<T> Bind<T, Y>(this IResult<Y> resultPrevious, Func<Y, IResult<T>> resultNext)
+        {
+            if (resultPrevious.IsOk)
+            {
+                var value = resultPrevious.GetSuccess<Y>().Value;
+                return resultNext(value);
+            }
+            else
+                return resultPrevious.GetError<T>();
+        }
+
+        /// <summary>
+        /// Chain two IResults that receive and return values.
+        /// </summary>
+        /// <returns>The bind.</returns>
+        /// <param name="resultPrevious">Result previous.</param>
+        /// <param name="resultNext">Result next.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static IResult Bind<T>(this IResult<T> resultPrevious, Func<T, IResult> resultNext)
+        {
+            if (resultPrevious.IsOk)
+            {
+                var value = resultPrevious.GetSuccess<T>().Value;
+                return resultNext(value);
+            }
+            else
+                return resultPrevious.GetError<T>();
         }
 
         #endregion
