@@ -33,6 +33,25 @@ namespace ErrorHandlersTests
             return result;
         }
 
+        public static IResult<double> DoDivision(double x, double y)
+        {
+            IResult<double> result;
+            try
+            {
+                result = new Success<double>(x / y);
+            }
+            catch(DivideByZeroException ex)
+            {
+                result = new Error<double>(ex);
+            }
+            catch (Exception ex)
+            {
+                result = new Error<double>(ex);
+            }
+            return result;
+        }
+        
+
         public static IResult BooleanOperation(Func<bool> fun)
         {
             IResult result;
@@ -69,6 +88,16 @@ namespace ErrorHandlersTests
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Just concatenate som garbage to a string.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public static IResult<string> DoStringStuff(string message)
+        {
+            return new Success<string>("*** " + message + " ***");
         }
 
         /// <summary>

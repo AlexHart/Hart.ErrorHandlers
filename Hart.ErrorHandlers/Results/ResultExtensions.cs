@@ -191,5 +191,41 @@ namespace Hart.ErrorHandlers.Results
 
         #endregion
 
+        public static IResult Bind(this IResult resultPrevious, Func<IResult> resultNext )
+        {
+            if (resultPrevious.IsOk)
+            {
+                return resultNext();
+            }
+            else
+            {
+                return resultPrevious.GetError();
+            }
+        }
+
+        public static IResult<T> Bind<T, Y>(this IResult<Y> resultPrevious, Func<Y, IResult<T>> resultNext)
+        {
+            if (resultPrevious.IsOk)
+            {
+                var value = resultPrevious.GetSuccess<Y>().Value;
+                return resultNext(value);
+            }
+            else
+                return resultPrevious.GetError<T>();
+        }
+
+        public static IResult Bind<T>(this IResult<T> resultPrevious, Func<T, IResult> resultNext)
+        {
+            if (resultPrevious.IsOk)
+            {
+                var value = resultPrevious.GetSuccess<T>().Value;
+                return resultNext(value);
+            }
+            else
+                return resultPrevious.GetError<T>();
+        }
+
+
+        //TODO: Add comments.
     }
 }
