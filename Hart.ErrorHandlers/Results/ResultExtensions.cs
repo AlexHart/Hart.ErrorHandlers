@@ -44,13 +44,7 @@ namespace Hart.ErrorHandlers.Results
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public static Success<T> GetSuccess<T>(this IResult<T> result)
-        {
-            if (result.IsSuccess())
-                return result as Success<T>;
-
-            throw new ArgumentException($"Wrong type {nameof(result)}");
-        }
+        public static Success<T> GetSuccess<T>(this IResult<T> result) => GetSuccess(result);
 
         public static Error GetError(this IResult result)
         {
@@ -60,6 +54,12 @@ namespace Hart.ErrorHandlers.Results
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
 
+        /// <summary>
+        /// Get the error out of an IResult. It will throw an exception if it's not an Error.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public static Error<T> GetError<T>(this IResult result)
         {
             if (result.IsError())
@@ -67,6 +67,14 @@ namespace Hart.ErrorHandlers.Results
 
             throw new ArgumentException($"Wrong type {nameof(result)}");
         }
+
+        /// <summary>
+        /// Get the error out of an IResult. It will throw an exception if it's not an Error.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static Error<T> GetError<T>(this IResult<T> result) => GetError(result);
 
         #endregion
 
