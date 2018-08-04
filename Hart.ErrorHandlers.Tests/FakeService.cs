@@ -59,7 +59,7 @@ namespace ErrorHandlersTests
             {
                 var boolRes = fun();
                 result = new Success<bool>(boolRes);
-	        }
+            }
             catch (Exception ex)
             {
                 result = new Error(ex);                
