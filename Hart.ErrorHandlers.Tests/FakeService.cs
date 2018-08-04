@@ -95,28 +95,22 @@ namespace ErrorHandlersTests
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public static IResult<string> DoStringStuff(string message)
-        {
-            return new Success<string>("*** " + message + " ***");
-        }
+        public static IResult<string> DoStringStuff(string message) =>
+            new Success<string>("*** " + message + " ***");
 
         /// <summary>
         /// Method to fake an async call.
         /// </summary>
         /// <returns></returns>
-        public static async Task<string> GetHelloWorldAsync()
-        {
-            return await Task.Run(() => "Hello world");
-        }
+        public static async Task<string> GetHelloWorldAsync() =>
+            await Task.Run(() => "Hello world");
 
         /// <summary>
         /// Method to fake an async call.
         /// </summary>
         /// <returns></returns>
-        public static async Task<int> GetIntAsync()
-        {
-            return await Task.Run(() => 1);
-        }
+        public static async Task<int> GetIntAsync() => 
+            await Task.Run(() => 1);
 
         public static async Task<int> DivideByZeroExceptionAsync()
         {
@@ -139,18 +133,14 @@ namespace ErrorHandlersTests
         /// Method to fake an async call.
         /// </summary>
         /// <returns></returns>
-        public static async Task DoFakeCalculationsAsync()
-        {
+        public static async Task DoFakeCalculationsAsync() => 
             await Task.Run(() => Thread.Sleep(10));
-        }
 
         /// <summary>
         /// Function that throws an OutOfMemoryException instead of returning the expected int.
         /// </summary>
         /// <returns></returns>
-        public static int OutOfMemory()
-        {
-            throw new OutOfMemoryException();
-        }
+        public static int OutOfMemory() => throw new OutOfMemoryException();
+
     }
 }
