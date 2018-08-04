@@ -10,10 +10,10 @@
     <PackageTags>C#, functional, error handling</PackageTags>
     <NeutralLanguage />
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>3.2.0</Version>
-    <AssemblyVersion>3.2.0.0</AssemblyVersion>
-    <FileVersion>3.2.0.0</FileVersion>
-    <PackageReleaseNotes>Added implicit operator to convert from Success&lt;T&gt; to T</PackageReleaseNotes>
+    <Version>3.2.1</Version>
+    <AssemblyVersion>3.2.1.0</AssemblyVersion>
+    <FileVersion>3.2.1.0</FileVersion>
+    <PackageReleaseNotes>Fix StackOverflow bug on GetSuccess and GetError</PackageReleaseNotes>
     <PackageLicenseUrl>https://raw.githubusercontent.com/AlexHart/Hart.ErrorHandlers/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 

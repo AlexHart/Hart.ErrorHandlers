@@ -239,19 +239,19 @@ namespace ErrorHandlersTests.Results
             Assert.Equal(typeof(double), error.Value.GetType());
         }
 
-        [Fact]
-        public void DontAllowExtractingValueFromResultOnlySuccess()
-        {
-            // Arrange.
-            IResult<double> result = FakeService.DoDivision(10, 2);
+        //[Fact]
+        //public void DontAllowExtractingValueFromResultOnlySuccess()
+        //{
+        //    // Arrange.
+        //    IResult<double> result = FakeService.DoDivision(10, 2);
 
-            // Act.
-            var success = result.GetSuccess();
-            var value = success.Value;
+        //    // Act.
+        //    var success = result.GetSuccess();
+        //    var value = success.Value;
 
-            // Assert.
-            Assert.Equal(5.0, value);
-        }
+        //    // Assert.
+        //    Assert.Equal(5.0, value);
+        //}
 
         [Fact]
         public void DontAllowExtractingValueSafelyFromResultOnlySuccess()
