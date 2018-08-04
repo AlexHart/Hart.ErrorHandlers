@@ -246,7 +246,7 @@ namespace ErrorHandlersTests.Results
             IResult<double> result = FakeService.DoDivision(10, 2);
 
             // Act.
-            var success = result.GetSuccess<double>();
+            var success = result.GetSuccess();
             var value = success.Value;
 
             // Assert.
