@@ -32,5 +32,46 @@ namespace Hart.ErrorHandlers.Tests.Options
             Assert.IsType<None>(option);
         }
 
+        [Fact]
+        public void WrapAndRetrieveSomeWithPatternMatching()
+        {
+            var option = FakeService.GetOption(true);
+
+            int res = 0;
+            switch(option)
+            {
+                case Some<int> some:
+                    res = some;
+                    break;
+                case None _:
+                    res = 0;
+                    break;
+            }
+
+            Assert.IsType<Some<int>>(option);
+            Assert.Equal(10, res);
+        }
+
+        [Fact]
+        public void WrapAndRetrieveNoneWithPatternMatching()
+        {
+            var option = FakeService.GetOption(false);
+
+            int res = 0;
+            switch (option)
+            {
+                case Some<int> some:
+                    res = some;
+                    break;
+                case None _:
+                    // Set it to -1 for the assert to check something different to 0.
+                    res = -1;
+                    break;
+            }
+
+            Assert.IsType<None>(option);
+            Assert.Equal(-1, res);
+        }
+
     }
 }

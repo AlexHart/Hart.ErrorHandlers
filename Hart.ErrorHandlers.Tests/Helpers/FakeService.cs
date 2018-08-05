@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Hart.ErrorHandlers.Options;
+using Hart.ErrorHandlers.Results;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hart.ErrorHandlers;
-using Hart.ErrorHandlers.Options;
-using Hart.ErrorHandlers.Results;
 
 namespace ErrorHandlersTests.Helpers
 {
