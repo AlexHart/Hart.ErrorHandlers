@@ -73,5 +73,21 @@ namespace Hart.ErrorHandlers.Tests.Options
             Assert.Equal(-1, res);
         }
 
+        [Fact]
+        public void BuildSomeWithHelper()
+        {
+            var some = Option.Some(1);
+
+            Assert.IsType<Some<int>>(some);
+            Assert.Equal(1, some);
+        } 
+
+        [Fact]
+        public void BuildNoneWithHelper()
+        {
+            var none = Option.None();
+
+            Assert.IsType<None>(none);
+        }
     }
 }

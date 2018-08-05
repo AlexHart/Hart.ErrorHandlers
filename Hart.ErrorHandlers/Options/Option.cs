@@ -7,6 +7,14 @@ namespace Hart.ErrorHandlers.Options
 
     public interface IOption { }
 
+    public static class Option {
+
+        public static Some<T> Some<T>(T value) => new Some<T>(value);
+
+        public static None None() => new None();
+
+    }
+
     public sealed class Some<T> : IOption
     {
         /// <summary>
