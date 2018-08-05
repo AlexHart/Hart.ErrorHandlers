@@ -3,6 +3,7 @@ using System;
 using Xunit;
 using System.Linq;
 using Hart.ErrorHandlers.Results;
+using ErrorHandlersTests.Helpers;
 
 namespace ErrorHandlersTests.Results
 {

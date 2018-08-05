@@ -4,9 +4,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hart.ErrorHandlers;
+using Hart.ErrorHandlers.Options;
 using Hart.ErrorHandlers.Results;
 
-namespace ErrorHandlersTests
+namespace ErrorHandlersTests.Helpers
 {
 
     /// <summary>
@@ -142,5 +143,12 @@ namespace ErrorHandlersTests
         /// <returns></returns>
         public static int OutOfMemory() => throw new OutOfMemoryException();
 
+        public static IOption GetOption(bool isSome)
+        {
+            if (isSome)
+                return new Some<int>(10);
+            else
+                return None.Value;
+        }
     }
 }
