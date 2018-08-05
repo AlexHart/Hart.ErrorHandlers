@@ -10,10 +10,10 @@
     <PackageTags>C#, functional, error handling</PackageTags>
     <NeutralLanguage />
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>3.2.1</Version>
-    <AssemblyVersion>3.2.1.0</AssemblyVersion>
-    <FileVersion>3.2.1.0</FileVersion>
-    <PackageReleaseNotes>Fix StackOverflow bug on GetSuccess and GetError</PackageReleaseNotes>
+    <Version>3.3.0</Version>
+    <AssemblyVersion>3.3.0.0</AssemblyVersion>
+    <FileVersion>3.3.0.0</FileVersion>
+    <PackageReleaseNotes>Add function wrapper for results</PackageReleaseNotes>
     <PackageLicenseUrl>https://raw.githubusercontent.com/AlexHart/Hart.ErrorHandlers/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
