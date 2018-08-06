@@ -16,7 +16,7 @@ namespace Hart.ErrorHandlers.Tests.Options
         {
             IOption<int> option = FakeService.GetOption(true);
            
-            var some = option as Some<int>;
+            var some = (Some<int>)option;
 
             Assert.IsType<Some<int>>(option);
             Assert.Equal(10, some);
@@ -27,7 +27,7 @@ namespace Hart.ErrorHandlers.Tests.Options
         {
             IOption<int> option = FakeService.GetOption(false);
 
-            var some = option as None<int>;
+            var some = (None<int>)option;
 
             Assert.IsType<None<int>>(option);
         }
