@@ -140,12 +140,12 @@ namespace ErrorHandlersTests.Helpers
         /// <returns></returns>
         public static int OutOfMemory() => throw new OutOfMemoryException();
 
-        public static IOption GetOption(bool isSome)
+        public static IOption<int> GetOption(bool isSome)
         {
             if (isSome)
                 return new Some<int>(10);
             else
-                return None.Value;
+                return None<int>.Value;
         }
     }
 }

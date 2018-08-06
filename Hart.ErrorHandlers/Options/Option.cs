@@ -5,17 +5,17 @@ using System.Text;
 namespace Hart.ErrorHandlers.Options
 {
 
-    public interface IOption { }
+    public interface IOption<T> { }
 
     public static class Option {
 
         public static Some<T> Some<T>(T value) => new Some<T>(value);
 
-        public static None None() => new None();
+        public static None<T> None<T>() => new None<T>();
 
     }
 
-    public sealed class Some<T> : IOption
+    public sealed class Some<T> : IOption<T>
     {
         /// <summary>
         /// Value wrapper in the some holder.
@@ -38,9 +38,9 @@ namespace Hart.ErrorHandlers.Options
         }
     }
 
-    public sealed class None : IOption
+    public sealed class None<T> : IOption<T>
     {
-        public static None Value { get => new None(); }
+        public static None<T> Value { get => Option.None<T>(); }
     }
 
 }

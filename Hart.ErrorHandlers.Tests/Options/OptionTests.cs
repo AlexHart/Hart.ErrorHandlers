@@ -14,7 +14,7 @@ namespace Hart.ErrorHandlers.Tests.Options
         [Fact]
         public void WrapAndRetrieveSome()
         {
-            IOption option = FakeService.GetOption(true);
+            IOption<int> option = FakeService.GetOption(true);
            
             var some = option as Some<int>;
 
@@ -25,17 +25,17 @@ namespace Hart.ErrorHandlers.Tests.Options
         [Fact]
         public void WrapAndRetrieveNone()
         {
-            IOption option = FakeService.GetOption(false);
+            IOption<int> option = FakeService.GetOption(false);
 
-            var some = option as None;
+            var some = option as None<int>;
 
-            Assert.IsType<None>(option);
+            Assert.IsType<None<int>>(option);
         }
 
         [Fact]
         public void WrapAndRetrieveSomeWithPatternMatching()
         {
-            var option = FakeService.GetOption(true);
+            IOption<int> option = FakeService.GetOption(true);
 
             int res = 0;
             switch(option)
@@ -43,7 +43,7 @@ namespace Hart.ErrorHandlers.Tests.Options
                 case Some<int> some:
                     res = some;
                     break;
-                case None _:
+                case None<int> _:
                     res = 0;
                     break;
             }
@@ -55,7 +55,7 @@ namespace Hart.ErrorHandlers.Tests.Options
         [Fact]
         public void WrapAndRetrieveNoneWithPatternMatching()
         {
-            var option = FakeService.GetOption(false);
+            IOption<int> option = FakeService.GetOption(false);
 
             int res = 0;
             switch (option)
@@ -63,13 +63,13 @@ namespace Hart.ErrorHandlers.Tests.Options
                 case Some<int> some:
                     res = some;
                     break;
-                case None _:
+                case None<int> _:
                     // Set it to -1 for the assert to check something different to 0.
                     res = -1;
                     break;
             }
 
-            Assert.IsType<None>(option);
+            Assert.IsType<None<int>>(option);
             Assert.Equal(-1, res);
         }
 
@@ -85,9 +85,9 @@ namespace Hart.ErrorHandlers.Tests.Options
         [Fact]
         public void BuildNoneWithHelper()
         {
-            var none = Option.None();
+            var none = Option.None<int>();
 
-            Assert.IsType<None>(none);
+            Assert.IsType<None<int>>(none);
         }
     }
 }
