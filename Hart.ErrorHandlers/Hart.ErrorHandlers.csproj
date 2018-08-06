@@ -10,10 +10,10 @@
     <PackageTags>C#, functional, error handling</PackageTags>
     <NeutralLanguage />
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>3.3.0</Version>
-    <AssemblyVersion>3.3.0.0</AssemblyVersion>
-    <FileVersion>3.3.0.0</FileVersion>
-    <PackageReleaseNotes>Add function wrapper for results</PackageReleaseNotes>
+    <Version>3.4.0</Version>
+    <AssemblyVersion>3.4.0.0</AssemblyVersion>
+    <FileVersion>3.4.0.0</FileVersion>
+    <PackageReleaseNotes>Added option types.</PackageReleaseNotes>
     <PackageLicenseUrl>https://raw.githubusercontent.com/AlexHart/Hart.ErrorHandlers/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
