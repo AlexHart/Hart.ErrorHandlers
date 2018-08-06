@@ -3,6 +3,7 @@ using Xunit;
 using System.Linq;
 using Hart.ErrorHandlers.Retry;
 using System.Diagnostics;
+using ErrorHandlersTests.Helpers;
 
 namespace ErrorHandlersTests.Retry
 {

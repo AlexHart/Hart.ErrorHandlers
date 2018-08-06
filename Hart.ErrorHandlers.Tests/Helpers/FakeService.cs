@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Hart.ErrorHandlers.Options;
+using Hart.ErrorHandlers.Results;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hart.ErrorHandlers;
-using Hart.ErrorHandlers.Results;
 
-namespace ErrorHandlersTests
+namespace ErrorHandlersTests.Helpers
 {
 
     /// <summary>
@@ -142,5 +140,12 @@ namespace ErrorHandlersTests
         /// <returns></returns>
         public static int OutOfMemory() => throw new OutOfMemoryException();
 
+        public static IOption<int> GetOption(bool isSome)
+        {
+            if (isSome)
+                return new Some<int>(10);
+            else
+                return None<int>.Value;
+        }
     }
 }

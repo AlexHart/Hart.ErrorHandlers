@@ -1,4 +1,5 @@
 ﻿using ErrorHandlersTests;
+using ErrorHandlersTests.Helpers;
 using Hart.ErrorHandlers.Results;
 using System;
 using System.Collections.Generic;
