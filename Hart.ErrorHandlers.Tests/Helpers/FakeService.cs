@@ -10,7 +10,7 @@ namespace ErrorHandlersTests.Helpers
     /// <summary>
     /// Class for testing.
     /// </summary>
-    public class FakeService
+    public static class FakeService
     {
 
         public static IResult<double> DoDivision(int x, int y)
@@ -144,8 +144,8 @@ namespace ErrorHandlersTests.Helpers
         {
             if (isSome)
                 return new Some<int>(10);
-            else
-                return None<int>.Value;
+            
+            return None<int>.Value;
         }
     }
 }

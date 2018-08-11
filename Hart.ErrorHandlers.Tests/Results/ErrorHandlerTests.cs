@@ -45,7 +45,7 @@ namespace Hart.ErrorHandlers.Tests.Results
         [Fact]
         public void WrapErrorFunc()
         {
-            var result = ErrorHandler.Execute(() => FakeService.OutOfMemory());
+            var result = ErrorHandler.Execute(FakeService.OutOfMemory);
 
             Assert.False(result.IsOk);
             Assert.IsType<Error<int>>(result);

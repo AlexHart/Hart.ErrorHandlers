@@ -15,7 +15,7 @@ namespace ErrorHandlersTests.Retry
         public void RetryWithInvokeDirectly()
         {
             // Arrange
-            var config = new RetryConfig()
+            var config = new RetryConfig
             {
                 MaxRetries = 10,
                 WaitBetweenRetries = TimeSpan.FromSeconds(1),
@@ -25,7 +25,7 @@ namespace ErrorHandlersTests.Retry
             Func<int> fun = () => 2 + 2;
 
             // Act.
-            var res = Retrier.Invoke(config, fun);
+            var res = config.Invoke(fun);
 
             // Assert.
             Assert.Equal(4, res.Result);
@@ -104,7 +104,7 @@ namespace ErrorHandlersTests.Retry
         public void InitRetryConfigDirectly()
         {
             // Arrange.
-            var retryConfig = new RetryConfig()
+            var retryConfig = new RetryConfig
             {
                 MaxRetries = 10,
                 WaitBetweenRetries = TimeSpan.FromSeconds(1)
@@ -231,8 +231,8 @@ namespace ErrorHandlersTests.Retry
                 i += 1;
                 if (i == iterations)
                     return expectedReturn;
-                else
-                    return i / zero;
+                
+                return i / zero;
             };
 
             // Act.
@@ -343,7 +343,7 @@ namespace ErrorHandlersTests.Retry
 
             // Assert.
             Assert.False(result.Successful);
-            Assert.Equal(2, result.RetryInfo.Executions); ;
+            Assert.Equal(2, result.RetryInfo.Executions);
             Assert.IsType<DivideByZeroException>(result.RetryInfo.Exceptions.FirstOrDefault());
         }
 

@@ -5,7 +5,7 @@
         /// <summary>
         /// Value wrapper in the some holder.
         /// </summary>
-        private T Value { get; }
+        T Value { get; }
 
         /// <summary>
         /// Constructor to set the value.

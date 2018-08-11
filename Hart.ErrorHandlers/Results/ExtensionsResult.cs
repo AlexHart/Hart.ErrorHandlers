@@ -6,10 +6,10 @@ using Hart.ErrorHandlers;
 namespace Hart.ErrorHandlers.Results
 {
 
-    public static partial class ExtensionsResult
+    public static class ExtensionsResult
     {
 
-        private static bool IsSuccess(this IResult result) => result is Success;
+        static bool IsSuccess(this IResult result) => result is Success;
 
         public static bool IsError(this IResult result) => result is Error;
 
@@ -103,7 +103,7 @@ namespace Hart.ErrorHandlers.Results
             catch (Exception ex)
             {
                 return (null, ex);
-            };
+            }
         }
 
         public static (Success<T> Value, Exception Exception) GetSuccessSafe<T>(this IResult result)

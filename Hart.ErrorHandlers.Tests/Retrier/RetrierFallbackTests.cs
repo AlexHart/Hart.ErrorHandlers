@@ -4,6 +4,7 @@ using System.Linq;
 using Hart.ErrorHandlers.Retry;
 using System.Diagnostics;
 using ErrorHandlersTests.Helpers;
+using System.Threading;
 
 namespace ErrorHandlersTests.Retry
 {
@@ -233,10 +234,7 @@ namespace ErrorHandlersTests.Retry
             var result = Retrier.Init()
                                 .WithNumberOfRetries(1)
                                 .WithMsWaitOf(0)
-                                .Invoke(() =>
-                                {
-                                    return FakeService.OutOfMemory();
-                                })
+                                .Invoke(FakeService.OutOfMemory)
                                 .WithFallBackAsync(async () => await FakeService.DivideByZeroExceptionAsync())
                                 .WaitForValue();
 

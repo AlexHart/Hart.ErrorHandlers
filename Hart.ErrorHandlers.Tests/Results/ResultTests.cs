@@ -57,7 +57,7 @@ namespace ErrorHandlersTests.Results
         {
             // Arrange.
             // Act.
-            IResult result = FakeService.BooleanOperation(() => 1 == 1);
+            IResult result = FakeService.BooleanOperation(() => true);
 
             // Assert.
             Assert.True(result is Success);
@@ -336,7 +336,7 @@ namespace ErrorHandlersTests.Results
         {
             IResult res = FakeService.DoDivision(100, 2)
                 .Bind((x) => FakeService.DoStringStuff(x.ToString()))
-                .Bind((x) => FakeService.FakeVoidMethod(x));
+                .Bind(FakeService.FakeVoidMethod);
 
             Assert.True(res.IsOk);
         }

@@ -24,7 +24,7 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="maxRetries"></param>
         /// <returns></returns>
         public static RetryConfig Init(TimeSpan wait, int maxRetries = 3) {
-            return new RetryConfig()
+            return new RetryConfig
             {
                 WaitBetweenRetries = wait,
                 MaxRetries = maxRetries
@@ -46,7 +46,7 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="function"></param>
         /// <param name="config"></param>
         /// <returns></returns>
-        private static RetryResult<T> RetryFunc<T>(Func<T> function, RetryConfig config)
+        static RetryResult<T> RetryFunc<T>(Func<T> function, RetryConfig config)
         {
 			var retryInfo = new RetryInfo();
             var result = new RetryResult<T>(default(T), retryInfo);
@@ -88,7 +88,7 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="function"></param>
         /// <param name="config"></param>
         /// <returns></returns>
-        private static async Task<RetryResult<T>> RetryFuncAsync<T>(Func<Task<T>> function, RetryConfig config)
+        static async Task<RetryResult<T>> RetryFuncAsync<T>(Func<Task<T>> function, RetryConfig config)
         {
             var retryInfo = new RetryInfo();
             var result = new RetryResult<T>(default(T), retryInfo);
@@ -129,7 +129,7 @@ namespace Hart.ErrorHandlers.Retry
         /// <param name="fun"></param>
         /// <param name="config"></param>
         /// <returns></returns>
-        private static RetryResult RetryAction(Action fun, RetryConfig config)
+        static RetryResult RetryAction(Action fun, RetryConfig config)
         {
             var retryInfo = new RetryInfo();
             var result = new RetryResult(retryInfo);

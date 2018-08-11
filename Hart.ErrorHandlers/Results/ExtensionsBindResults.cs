@@ -34,8 +34,8 @@ namespace Hart.ErrorHandlers.Results
                 var value = resultPrevious.GetSuccess<Y>().Value;
                 return resultNext(value);
             }
-            else
-                return resultPrevious.GetError<T>();
+
+            return resultPrevious.GetError<T>();
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace Hart.ErrorHandlers.Results
                 var value = resultPrevious.GetSuccess().Value;
                 return resultNext(value);
             }
-            else
-                return resultPrevious;
+
+            return resultPrevious;
         }
 
     }
