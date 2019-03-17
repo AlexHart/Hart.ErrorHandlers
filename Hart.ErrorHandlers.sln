@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hart.ErrorHandlers.Tests", "Hart.ErrorHandlers.Tests\Hart.ErrorHandlers.Tests.csproj", "{A4E90203-CE70-4B8A-B60B-7952B3C448F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hart.Validation", "Hart.Validation\Hart.Validation.csproj", "{E05F8731-00BE-4003-9EB5-793FA923770E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hart.Validation.Tests", "Hart.Validation.Tests\Hart.Validation.Tests.csproj", "{E9C0B957-88D8-46AB-8151-CE182C65D645}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,14 @@ Global
 		{A4E90203-CE70-4B8A-B60B-7952B3C448F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4E90203-CE70-4B8A-B60B-7952B3C448F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4E90203-CE70-4B8A-B60B-7952B3C448F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E05F8731-00BE-4003-9EB5-793FA923770E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E05F8731-00BE-4003-9EB5-793FA923770E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E05F8731-00BE-4003-9EB5-793FA923770E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E05F8731-00BE-4003-9EB5-793FA923770E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9C0B957-88D8-46AB-8151-CE182C65D645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9C0B957-88D8-46AB-8151-CE182C65D645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9C0B957-88D8-46AB-8151-CE182C65D645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9C0B957-88D8-46AB-8151-CE182C65D645}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
