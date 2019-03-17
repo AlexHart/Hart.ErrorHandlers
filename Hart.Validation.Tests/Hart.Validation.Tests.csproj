@@ -16,4 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Hart.Validation\Hart.Validation.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Person\" />
+  </ItemGroup>
 </Project>

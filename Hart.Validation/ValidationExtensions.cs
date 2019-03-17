@@ -7,15 +7,10 @@ namespace Hart.Validation
     {
         public static ValidationResult Validate(this IEnumerable<ValidationRule> rules)
         {
-            var errors = new List<string>();
-
-            foreach (var rule in rules)
-            {
-                if (!rule.Validate())
-                {
-                    errors.Add(rule.ErrorMessage);
-                }
-            }
+            var errors = rules
+                .Where(x => !x.IsValid)
+                .Select(x => x.ErrorMessage)
+                .ToList();
 
             return new ValidationResult(!errors.Any(), errors);
         }

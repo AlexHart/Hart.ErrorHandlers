@@ -11,17 +11,23 @@ namespace Hart.Validation
         /// </summary>
         /// <param name="errorMessage">Error message.</param>
         /// <param name="validationFunction">Validation function.</param>
-        /// <remarks>The validation function is a closure so be carefull what you pass to it if it has to be disposed</remarks>
+        /// <remarks>The validation function is a closure so be carefull what you pass to it if it has to be disposed fast</remarks>
         public ValidationRule(string errorMessage, Func<bool> validationFunction)
         {
             ErrorMessage = errorMessage;
-            ValidationFunction = validationFunction;
+
+            try
+            {
+                IsValid = validationFunction();
+            }
+            catch (Exception)
+            {
+                IsValid = false;
+            }
         }
 
         public string ErrorMessage { get; }
 
-        private Func<bool> ValidationFunction { get; }
-
-        public bool Validate() => ValidationFunction();
+        public bool IsValid { get; }
     }
 }
