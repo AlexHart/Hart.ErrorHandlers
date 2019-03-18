@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Alejandro Hartlöhner</Authors>
+    <Owners>Alejandro Hartlöhner</Owners>
+    <Description>Small library for doing validations</Description>
+    <PackageProjectUrl>https://github.com/AlexHart/Hart.ErrorHandlers</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/AlexHart/Hart.ErrorHandlers/master/LICENSE</PackageLicenseUrl>
+    <PackageTags>C#, Validation</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -9,5 +15,12 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <LangVersion>Latest</LangVersion>
+    <DebugType></DebugType>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove=".DS_Store" />
+  </ItemGroup>
 </Project>

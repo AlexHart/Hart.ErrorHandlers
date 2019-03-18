@@ -6,7 +6,7 @@ using static Hart.Validation.Tests.Constants;
 
 namespace Hart.Validation.Tests
 {
-    public partial class ValidationTests
+    public class ValidationTests
     {
         [Fact]
         public void ValidateEmptyListShouldBeOk()
