@@ -3,6 +3,8 @@ using ErrorHandlersTests.Helpers;
 using Hart.ErrorHandlers.Options;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Xunit;
 
@@ -88,6 +90,50 @@ namespace Hart.ErrorHandlers.Tests.Options
             var none = Option.None<int>();
 
             Assert.IsType<None<int>>(none);
+        }
+
+        [Fact]
+        public void MapOptionIntToStringTest()
+        {
+            var someNum = Option.Some(8);
+            var res = someNum.Map(x =>
+            {
+                switch (x)
+                {
+                    case Some<int> s: return ((int)s).ToString();
+                    default: return string.Empty;
+                }
+            });
+
+            Assert.Equal("8", res);
+        }
+
+        [Fact]
+        public void MapOptionStringToIntTest()
+        {
+            var someNum = Option.Some("8");
+
+            var optionStringToInt = new Func<IOption<string>, int>((x) =>
+                x is Some<string> s
+                ? int.Parse(s)
+                : throw new InvalidCastException());
+
+            int res = someNum.Map(optionStringToInt);
+
+            Assert.Equal(8, res);
+        }
+
+        [Fact]
+        public void MapOptionStringToUppercaseStringTest()
+        {
+            var someNum = Option.Some("hello world");
+
+            var res = someNum.Map(x =>
+                x is Some<string> s
+                ? ((string)s).ToUpper()
+                : string.Empty);
+
+            Assert.Equal("HELLO WORLD", res);
         }
     }
 }
